@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+build
+dist
+.env
+.env.*
+!.env.example
+!.env.production.example
+.pnpm-store
+.npm-cache
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+*.log

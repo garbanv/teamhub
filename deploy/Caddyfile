@@ -1,0 +1,12 @@
+# Automatic HTTPS for Hub. APP_DOMAIN is set by docker-compose.prod.yml and
+# must be a domain only, without https:// and without a trailing slash.
+{$APP_DOMAIN} {
+	encode zstd gzip
+
+	reverse_proxy app:3000
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+}

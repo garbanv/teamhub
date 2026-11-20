@@ -1,0 +1,24 @@
+import type { Metadata } from "next";
+
+import { PersonalTaskView } from "@/components/workspace/task/personal-task-view";
+import { getTasksForUser } from "@/lib/tasks";
+import { requireWorkspacePage } from "@/lib/workspace-page";
+
+export const metadata: Metadata = { title: "Due Soon" };
+
+export default async function DueSoonPage({
+  params,
+}: {
+  params: Promise<{ workspace: string }>;
+}) {
+  const { workspace: slug } = await params;
+  const { user, workspace } = await requireWorkspacePage(slug);
+  const tasks = await getTasksForUser(workspace.id, user.id, "due-soon");
+  return (
+    <PersonalTaskView
+      view="due-soon"
+      tasks={tasks}
+      workspaceSlug={workspace.slug}
+    />
+  );
+}
