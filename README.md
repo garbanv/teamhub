@@ -147,7 +147,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Production deployment
 
-Hub ships with a production Docker image and Compose stack. On a new database, the app applies migrations automatically at startup, then serves the app. **No demo data is seeded in production** — the first account creates its own workspace.
+> **Using Coolify?** Follow the dedicated [COOLIFY.md](COOLIFY.md) guide. It uses the Dockerfile as a Coolify application plus a separate Coolify PostgreSQL resource; Coolify handles HTTPS, so the bundled Compose/Caddy stack is not used.
+
+For a plain VPS without Coolify, Hub ships with a production Docker image and Compose stack. On a new database, the app applies migrations automatically at startup, then serves the app. **No demo data is seeded in production** — the first account creates its own workspace.
 
 ### What is included
 
@@ -373,6 +375,7 @@ scripts/
   seed.ts, reset.ts          Local demo tooling
 deploy/
   Caddyfile                  Optional automatic HTTPS reverse proxy
+COOLIFY.md                   Coolify + PostgreSQL deployment guide
 Dockerfile                   Multi-stage production image
 docker-compose.prod.yml      App + PostgreSQL + optional Caddy
 .env.production.example      Production environment template
