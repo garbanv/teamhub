@@ -44,6 +44,14 @@ services:
       NEXT_PUBLIC_APP_URL: ${BETTER_AUTH_URL:?Set BETTER_AUTH_URL in .env}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env}
       BETTER_AUTH_TRUSTED_ORIGINS: ${BETTER_AUTH_TRUSTED_ORIGINS:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_REPLY_TO: ${SMTP_REPLY_TO:-}
+      EMAIL_NOTIFICATION_TYPES: ${EMAIL_NOTIFICATION_TYPES-assigned,mentioned,comment}
     ports:
       # Bound to localhost. Put nginx/Caddy/Traefik in front, or use the
       # bundled Caddy profile below for automatic HTTPS.

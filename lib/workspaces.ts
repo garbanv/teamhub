@@ -99,6 +99,14 @@ export async function getWorkspaceForUser(
   return rows[0] ?? null;
 }
 
+export async function getWorkspaceIdentity(workspaceId: string) {
+  const { rows } = await query<{ name: string; slug: string }>(
+    "select name, slug from workspaces where id = $1 limit 1",
+    [workspaceId],
+  );
+  return rows[0] ?? null;
+}
+
 export async function getWorkspaceRole(
   workspaceId: string,
   userId: string,

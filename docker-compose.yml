@@ -19,5 +19,16 @@ services:
       timeout: 5s
       retries: 10
 
+  # Local email catcher. Start with: docker compose --profile mail up -d
+  # Web UI: http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: hub-mailpit
+    profiles: ["mail"]
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
 volumes:
   hub_postgres_data:

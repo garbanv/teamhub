@@ -10,7 +10,10 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
-  serverExternalPackages: ["pg"],
+  serverExternalPackages: ["pg", "nodemailer"],
+  outputFileTracingIncludes: {
+    "/**": ["./node_modules/nodemailer/**/*"],
+  },
   async headers() {
     return [
       {

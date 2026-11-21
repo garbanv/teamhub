@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { requireApiUser, routeError } from "@/lib/api";
+import { buildInviteEmail } from "@/lib/email-templates";
+import { sendEmail } from "@/lib/email";
 import { AppError } from "@/lib/errors";
 import { inviteUrl } from "@/lib/invitations";
 import { canManageWorkspace } from "@/lib/permissions";
@@ -8,6 +10,7 @@ import { createInvitationSchema } from "@/lib/validation";
 import {
   createInvitation,
   getPendingInvitations,
+  getWorkspaceIdentity,
   getWorkspaceRole,
 } from "@/lib/workspaces";
 
@@ -56,6 +59,23 @@ export async function POST(
     });
 
     const origin = new URL(request.url).origin;
+    const workspace = await getWorkspaceIdentity(id);
+    if (!workspace) throw new AppError("Workspace not found.", 404);
+
+    const url = inviteUrl(invitation.token, origin);
+    const email = buildInviteEmail({
+      workspaceName: workspace.name,
+      inviterName: user.name,
+      inviteUrl: url,
+      expiresAt: invitation.expiresAt,
+    });
+    const emailResult = await sendEmail({
+      to: input.email,
+      subject: email.subject,
+      text: email.text,
+      html: email.html,
+    });
+
     return NextResponse.json(
       {
         invitation: {
@@ -63,7 +83,8 @@ export async function POST(
           email: input.email,
           role: input.role,
           expiresAt: invitation.expiresAt,
-          url: inviteUrl(invitation.token, origin),
+          url,
+          emailStatus: emailResult.status,
         },
       },
       { status: 201 },

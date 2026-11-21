@@ -2,7 +2,16 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, Link2, Loader2, MailPlus, UserPlus } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Link2,
+  Loader2,
+  MailCheck,
+  MailPlus,
+  MailX,
+  UserPlus,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 type InviteResult = {
   id: string;
@@ -30,6 +40,7 @@ type InviteResult = {
   role: "admin" | "member";
   expiresAt: string;
   url: string;
+  emailStatus: "sent" | "not_configured" | "failed";
 };
 
 export function InviteMemberDialog({
@@ -85,7 +96,11 @@ export function InviteMemberDialog({
         throw new Error(data.error || "Could not create invitation.");
       }
       setResult(data.invitation);
-      toast.success("Invite link created.");
+      toast.success(
+        data.invitation.emailStatus === "sent"
+          ? "Invitation email sent."
+          : "Invite link created.",
+      );
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not create invitation.",
@@ -206,18 +221,58 @@ export function InviteMemberDialog({
           <>
             <DialogHeader>
               <div className="mb-1 flex size-9 items-center justify-center rounded-full bg-success/12 text-success">
-                <Check className="size-4" strokeWidth={2.5} />
+                {result.emailStatus === "sent" ? (
+                  <MailCheck className="size-4" />
+                ) : result.emailStatus === "failed" ? (
+                  <MailX className="size-4" />
+                ) : (
+                  <Check className="size-4" strokeWidth={2.5} />
+                )}
               </div>
-              <DialogTitle>Invite ready for {result.email}</DialogTitle>
+              <DialogTitle className="break-words">
+                {result.emailStatus === "sent"
+                  ? `Invite emailed to ${result.email}`
+                  : `Invite ready for ${result.email}`}
+              </DialogTitle>
               <DialogDescription>
-                Send them this private link. It expires in 7 days and can only
-                be used once.
+                {result.emailStatus === "sent"
+                  ? "We sent them a private invitation email. You can also share the link directly."
+                  : "Send them this private link. It expires in 7 days and can only be used once."}
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/35 p-1 pl-3">
-                <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground">
+            <div className="min-w-0 space-y-3">
+              <div
+                className={cn(
+                  "flex min-w-0 items-center gap-2 rounded-lg border p-2 pl-2.5 text-[11px]",
+                  result.emailStatus === "sent"
+                    ? "border-success/25 bg-success/8 text-success"
+                    : result.emailStatus === "failed"
+                      ? "border-destructive/25 bg-destructive/8 text-destructive"
+                      : "border-border bg-muted/35 text-muted-foreground",
+                )}
+              >
+                {result.emailStatus === "sent" ? (
+                  <MailCheck className="size-3.5 shrink-0" />
+                ) : result.emailStatus === "failed" ? (
+                  <MailX className="size-3.5 shrink-0" />
+                ) : (
+                  <MailPlus className="size-3.5 shrink-0" />
+                )}
+                <span className="min-w-0 flex-1">
+                  {result.emailStatus === "sent"
+                    ? "Email sent"
+                    : result.emailStatus === "failed"
+                      ? "Email could not be sent. Copy the link instead."
+                      : "Email delivery isn’t configured. Copy the link instead."}
+                </span>
+              </div>
+
+              <div className="flex min-w-0 max-w-full items-center gap-2 overflow-hidden rounded-lg border border-border bg-muted/35 p-1 pl-3">
+                <span
+                  className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground"
+                  title={result.url}
+                >
                   {result.url}
                 </span>
                 <Button

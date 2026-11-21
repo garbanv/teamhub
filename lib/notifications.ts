@@ -1,6 +1,7 @@
 import type { PoolClient } from "pg";
 
 import { query } from "./db";
+import { enqueueNotificationEmail } from "./email-outbox";
 import type { NotificationSummary } from "./types";
 
 type NotificationRow = {
@@ -118,12 +119,14 @@ export async function createNotification(
     taskId?: string | null;
   },
 ) {
-  if (input.userId === input.actorId) return;
-  await client.query(
+  if (input.userId === input.actorId) return null;
+
+  const result = await client.query<{ id: string }>(
     `
       insert into notifications
         (workspace_id, user_id, actor_id, task_id, type, title, body)
       values ($1, $2, $3, $4, $5, $6, $7)
+      returning id
     `,
     [
       input.workspaceId,
@@ -135,6 +138,19 @@ export async function createNotification(
       input.body ?? null,
     ],
   );
+
+  const notificationId = result.rows[0]!.id;
+  await enqueueNotificationEmail(client, {
+    notificationId,
+    workspaceId: input.workspaceId,
+    userId: input.userId,
+    type: input.type,
+    title: input.title,
+    body: input.body,
+    taskId: input.taskId,
+  });
+
+  return notificationId;
 }
 
 export async function getTaskFollowerIds(

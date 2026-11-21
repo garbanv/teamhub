@@ -71,14 +71,24 @@ Add these under **Environment Variables**. Set **Build time** to **Not available
 | `NEXT_PUBLIC_APP_URL` | Same as `BETTER_AUTH_URL` (optional but recommended) | No |
 | `BETTER_AUTH_TRUSTED_ORIGINS` | Extra comma-separated origins, e.g. `https://www.hub.yourdomain.com` | No |
 | `DATABASE_POOL_MAX` | `10` (default) | No |
+| `SMTP_HOST` | SMTP hostname | For email |
+| `SMTP_PORT` | `587` (or `465` for implicit TLS) | For email |
+| `SMTP_SECURE` | `true`/`false`; port 465 is detected automatically | No |
+| `SMTP_USER`, `SMTP_PASSWORD` | SMTP credentials | For email |
+| `SMTP_FROM` | Verified sender, e.g. `Hub <notifications@yourdomain.com>` | For email |
+| `SMTP_REPLY_TO` | Optional Reply-To address | No |
+| `EMAIL_NOTIFICATION_TYPES` | Default `assigned,mentioned,comment` | No |
 
 Notes:
 
-- **Lock** `DATABASE_URL` and `BETTER_AUTH_SECRET` after saving them.
+- **Lock** `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `SMTP_PASSWORD` after saving them.
+- All SMTP variables are runtime-only. Leave `SMTP_HOST` and `SMTP_FROM` empty to disable email; invitation links still work.
 - If the internal Postgres URL contains `$` characters, set its interpolation to **Literal** in Coolify.
 - Do not set `DATABASE_SSL` for the private internal connection.
 - If you access the app through both the apex and `www` domains, add both to `BETTER_AUTH_TRUSTED_ORIGINS`. The origin must match or Better Auth rejects the login/signup request with `Invalid origin`.
 - The container refuses to boot with the placeholder values from `.env.production.example` or a secret shorter than 32 characters.
+- Notification emails are queued in PostgreSQL and delivered by a worker inside the app process within about 15 seconds. No separate worker or cron job is needed; leave the app running normally.
+- Invitations send email immediately when SMTP is configured. If SMTP is down or not configured, the invite dialog still shows a copyable link.
 
 ## 4. Deploy
 
@@ -88,7 +98,8 @@ Select **Deploy** and watch the deployment logs. On first boot you should see:
 Running database migrations...
   → applying 001_initial.sql
   → applying 002_docs.sql
-Applied 2 migrations.
+  → applying 003_email_outbox.sql
+Applied 3 migrations.
 Starting Hub on 0.0.0.0:3000...
 ✓ Ready
 ```

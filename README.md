@@ -12,7 +12,7 @@ A calm, keyboard-friendly team workspace inspired by [Linear](https://linear.app
 
 - Email + password authentication with [Better Auth](https://better-auth.com/) and database-backed sessions.
 - Workspaces with `owner`, `admin`, and `member` roles.
-- Email-bound, single-use invite links with 7-day expiry.
+- Email-bound, single-use invite links with 7-day expiry. Invitations can be emailed automatically when SMTP is configured.
 - Persistent sidebar with workspace switcher, Home, My Tasks, personal views, Projects, nested Docs, and a disabled Chat placeholder.
 - Command palette (`⌘K` / `Ctrl+K`) with page jumps, project/task search, workspace switching, and theme actions.
 - Light, dark, and system themes.
@@ -50,6 +50,7 @@ A calm, keyboard-friendly team workspace inspired by [Linear](https://linear.app
 - Per-task activity feed covering creation, title, description, status, assignee, priority, due date, labels, related links, and comments.
 - Follow/unfollow a task. Creators and assignees follow automatically, and mentioned teammates are added as followers.
 - In-app notifications for assignments, mentions, and changes or comments on followed tasks, with unread counts and mark-as-read controls.
+- Optional transactional email for invitations, assignments, mentions, and comments, delivered through Nodemailer and a durable outbox worker.
 
 ### Docs — phase 1
 
@@ -83,6 +84,7 @@ Seeded pages: **Team handbook**, nested **How we communicate** and **Product pri
 | Database | PostgreSQL 17 |
 | Data access | Raw SQL through `pg` — no Prisma or Drizzle |
 | Auth | Better Auth 1.7 (email/password, session cookies) |
+| Email | Nodemailer + SMTP, durable PostgreSQL outbox |
 | Icons | Lucide |
 | Local services | Docker Compose |
 
@@ -144,6 +146,37 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Test email locally
+
+Hub can send real SMTP email. For local testing, start the bundled Mailpit catcher:
+
+```bash
+docker compose --profile mail up -d
+```
+
+Add these to `.env.local`:
+
+```env
+SMTP_HOST=127.0.0.1
+SMTP_PORT=1025
+SMTP_SECURE=false
+SMTP_FROM="Hub <hub@local.test>"
+EMAIL_NOTIFICATION_TYPES=assigned,mentioned,comment
+```
+
+Restart `pnpm dev`, then open [http://localhost:8025](http://localhost:8025) to inspect delivered messages. Invitations are sent immediately; task notifications are queued and delivered by the in-process worker within about 15 seconds.
+
+## Email delivery
+
+Email is optional and enabled by setting `SMTP_HOST` and `SMTP_FROM`.
+
+- **Invitations** send immediately. If SMTP is unavailable, the invite still exists and the dialog keeps the copyable link.
+- **In-app notifications** queue an email in the same PostgreSQL transaction as the notification. A worker inside the app delivers pending messages every 15 seconds, retries transient failures up to five times, and recovers stale claims after a crash.
+- Default email notification types are `assigned`, `mentioned`, and `comment`. Set `EMAIL_NOTIFICATION_TYPES=assigned,mentioned,comment,task_updated` to also email every followed-task update, or leave it empty to disable notification email while keeping invitation email enabled.
+- The worker is part of the app process, so no separate worker container or cron job is required. Multiple app replicas are safe: `FOR UPDATE SKIP LOCKED` prevents duplicate claims.
+- Emails contain task/workspace deep links built from `BETTER_AUTH_URL`. Set it to the public URL.
+- A failed notification email never rolls back the underlying task, comment, or notification.
 
 ## Production deployment
 
@@ -330,6 +363,13 @@ After `db:reset`, run `pnpm db:migrate && pnpm db:seed`. Production deploys do n
 | `DATABASE_POOL_MAX` | No | PostgreSQL pool size per app instance (default 10) |
 | `DATABASE_SSL` | No | Set to `true` for a managed PostgreSQL instance requiring TLS |
 | `DATABASE_SSL_REJECT_UNAUTHORIZED` | No | Set to `false` only for a self-signed certificate |
+| `SMTP_HOST` | No | SMTP hostname; enables transactional email when set with `SMTP_FROM` |
+| `SMTP_PORT` | No | SMTP port (default 587; 465 enables implicit TLS automatically) |
+| `SMTP_SECURE` | No | Set to `true` for implicit TLS on non-465 ports |
+| `SMTP_USER`, `SMTP_PASSWORD` | No | SMTP authentication credentials |
+| `SMTP_FROM` | With SMTP | Verified sender, e.g. `Hub <notifications@example.com>` |
+| `SMTP_REPLY_TO` | No | Optional Reply-To address |
+| `EMAIL_NOTIFICATION_TYPES` | No | Comma-separated notification types to email (default `assigned,mentioned,comment`) |
 
 The production Compose stack also reads `POSTGRES_USER`, `POSTGRES_DB`, `POSTGRES_PASSWORD`, `APP_DOMAIN`, and `APP_PORT` from `.env`.
 
@@ -364,11 +404,17 @@ lib/
   task-view.ts               View/filter/sort parsing and URL helpers
   saved-views.ts             Saved view storage and access
   docs.ts                    Nested docs pages and workspace files
+  email.ts                   Nodemailer SMTP transport
+  email-templates.ts         Invite and notification email templates
+  email-outbox.ts            Durable notification email queue
+  email-worker.ts            In-process outbox delivery worker
   access.ts                  Workspace/project authorization helpers
   search.ts                  Command palette search
+instrumentation.ts           Starts the email worker at server boot
 db/
   migrations/001_initial.sql Core relational schema
   migrations/002_docs.sql    Docs pages and uploaded files
+  migrations/003_email_outbox.sql Durable notification email queue
 scripts/
   migrate.mjs                Production-safe SQL migration runner
   docker-entrypoint.sh       Validates env, migrates, starts standalone server
@@ -457,8 +503,11 @@ Invites are bound to an email address and stored as SHA-256 hashes — the raw t
 
 - `db/migrations/001_initial.sql` — Better Auth, workspaces, projects/workflows, tasks, comments, activity, notifications, saved views.
 - `db/migrations/002_docs.sql` — nested docs pages and workspace file uploads.
+- `db/migrations/003_email_outbox.sql` — durable outbox for notification emails.
 
 Docs pages store their Tiptap JSON and a plain-text representation for future search. Page files are stored in PostgreSQL and served only to workspace members through an authenticated route.
+
+Notification emails are queued inside the same transaction as the in-app notification, then claimed with `FOR UPDATE SKIP LOCKED` by the app's background worker. Invitation emails are sent immediately and are not stored in the outbox.
 
 The migration runner tracks applied files in `_hub_migrations`.
 
