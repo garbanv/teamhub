@@ -13,8 +13,10 @@ import {
   Link2,
   ListTree,
   Loader2,
+  MoreHorizontal,
   Plus,
   Search,
+  Trash2,
   Tag,
   UserRound,
   X,
@@ -23,6 +25,7 @@ import { format, formatDistanceToNowStrict } from "date-fns";
 import { toast } from "sonner";
 
 import { RichTextEditor } from "@/components/workspace/rich-text-editor";
+import { DeleteTaskDialog } from "@/components/workspace/task/delete-task-dialog";
 import { TaskConversation } from "@/components/workspace/task/task-conversation";
 import { UserAvatar } from "@/components/user-avatar";
 import { Badge } from "@/components/ui/badge";
@@ -109,6 +112,7 @@ export function TaskDetailView({
   const [linkingId, setLinkingId] = React.useState<string | null>(null);
   const [following, setFollowing] = React.useState(initialFollowing);
   const [togglingFollow, setTogglingFollow] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   React.useEffect(() => {
     setTask(initialTask);
@@ -438,6 +442,28 @@ export function TaskDetailView({
             {following ? "Following" : "Follow"}
           </span>
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="mt-1 shrink-0 text-muted-foreground"
+              aria-label="Task actions"
+            >
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              variant="destructive"
+              onSelect={() => setDeleteOpen(true)}
+              className="gap-2"
+            >
+              <Trash2 className="size-3.5" />
+              Delete task
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_286px]">
@@ -878,6 +904,20 @@ export function TaskDetailView({
           </div>
         </DialogContent>
       </Dialog>
+
+      <DeleteTaskDialog
+        task={{
+          id: task.id,
+          identifier: task.identifier,
+          title: task.title,
+          projectKey: task.projectKey,
+          subtaskCount: task.subtasks.length,
+        }}
+        workspaceId={workspaceId}
+        workspaceSlug={workspaceSlug}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
     </div>
   );
 }

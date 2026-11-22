@@ -74,7 +74,7 @@ Add these under **Environment Variables**. Set **Build time** to **Not available
 | `SMTP_HOST` | SMTP hostname | For email |
 | `SMTP_PORT` | `587` (or `465` for implicit TLS) | For email |
 | `SMTP_SECURE` | `true`/`false`; port 465 is detected automatically | No |
-| `SMTP_USER`, `SMTP_PASSWORD` | SMTP credentials | For email |
+| `SMTP_USERNAME` (or `SMTP_USER`), `SMTP_PASSWORD` | SMTP credentials | For email |
 | `SMTP_FROM` | Verified sender, e.g. `Hub <notifications@yourdomain.com>` | For email |
 | `SMTP_REPLY_TO` | Optional Reply-To address | No |
 | `EMAIL_NOTIFICATION_TYPES` | Default `assigned,mentioned,comment` | No |
@@ -83,6 +83,7 @@ Notes:
 
 - **Lock** `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `SMTP_PASSWORD` after saving them.
 - All SMTP variables are runtime-only. Leave `SMTP_HOST` and `SMTP_FROM` empty to disable email; invitation links still work.
+- For Gmail/Google Workspace: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, `SMTP_USERNAME=you@gmail.com`, `SMTP_PASSWORD=<16-character App Password>`, and `SMTP_FROM` set to that Gmail address or a verified alias. A `535` error means Gmail rejected the credentials; regenerate the App Password and verify the username.
 - If the internal Postgres URL contains `$` characters, set its interpolation to **Literal** in Coolify.
 - Do not set `DATABASE_SSL` for the private internal connection.
 - If you access the app through both the apex and `www` domains, add both to `BETTER_AUTH_TRUSTED_ORIGINS`. The origin must match or Better Auth rejects the login/signup request with `Invalid origin`.

@@ -48,9 +48,12 @@ services:
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}
       SMTP_USER: ${SMTP_USER:-}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_PASS: ${SMTP_PASS:-}
       SMTP_FROM: ${SMTP_FROM:-}
       SMTP_REPLY_TO: ${SMTP_REPLY_TO:-}
+      SMTP_LOCAL_ADDRESS: ${SMTP_LOCAL_ADDRESS:-0.0.0.0}
       EMAIL_NOTIFICATION_TYPES: ${EMAIL_NOTIFICATION_TYPES-assigned,mentioned,comment}
     ports:
       # Bound to localhost. Put nginx/Caddy/Traefik in front, or use the

@@ -18,6 +18,8 @@ export type SendEmailResult =
 let transporter: Transporter | null = null;
 let transporterKey = "";
 let warnedMissingConfig = false;
+let warnedPartialAuth = false;
+let loggedConfig = false;
 
 function readConfig(): EmailConfig | null {
   const host = process.env.SMTP_HOST?.trim();
@@ -33,13 +35,28 @@ function readConfig(): EmailConfig | null {
   }
 
   const port = Number.parseInt(process.env.SMTP_PORT ?? "587", 10);
-  const user = process.env.SMTP_USER?.trim() || undefined;
-  const pass = process.env.SMTP_PASSWORD || undefined;
+  // Accept both names: SMTP_USER/SMTP_PASSWORD are Hub-native, while
+  // SMTP_USERNAME/SMTP_PASS are common in existing Nodemailer configs.
+  const user =
+    process.env.SMTP_USERNAME?.trim() ||
+    process.env.SMTP_USER?.trim() ||
+    undefined;
+  const pass = process.env.SMTP_PASSWORD || process.env.SMTP_PASS || undefined;
+
+  if (Boolean(user) !== Boolean(pass) && !warnedPartialAuth) {
+    warnedPartialAuth = true;
+    console.warn(
+      "[email] SMTP username and password must both be set; one is missing.",
+    );
+  }
 
   return {
     host,
     port: Number.isFinite(port) && port > 0 ? port : 587,
-    secure: process.env.SMTP_SECURE === "true" || port === 465,
+    secure:
+      process.env.SMTP_SECURE === "true" ||
+      process.env.SMTP_SECURE === "1" ||
+      port === 465,
     user,
     pass,
     from,
@@ -64,10 +81,20 @@ function getTransporter() {
   ].join("|");
 
   if (!transporter || transporterKey !== key) {
+    if (!loggedConfig) {
+      loggedConfig = true;
+      console.info(
+        `[email] SMTP configured for ${config.host}:${config.port} (secure=${config.secure}, auth=${Boolean(config.user && config.pass)})`,
+      );
+    }
     transporter = nodemailer.createTransport({
       host: config.host,
       port: config.port,
       secure: config.secure,
+      // Match the common VPS/Gmail configuration and avoid IPv6-only egress
+      // surprises on hosts that route SMTP over IPv4.
+      localAddress:
+        process.env.SMTP_LOCAL_ADDRESS?.trim() || "0.0.0.0",
       auth:
         config.user && config.pass
           ? { user: config.user, pass: config.pass }

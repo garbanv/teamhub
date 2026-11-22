@@ -171,6 +171,19 @@ Restart `pnpm dev`, then open [http://localhost:8025](http://localhost:8025) to 
 
 Email is optional and enabled by setting `SMTP_HOST` and `SMTP_FROM`.
 
+For Gmail/Google Workspace, use an **App Password** (not your account password):
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USERNAME=you@gmail.com
+SMTP_PASSWORD=your-16-character-app-password
+SMTP_FROM="Your Name <you@gmail.com>"
+```
+
+`SMTP_USER` and `SMTP_PASS` are also accepted as aliases. The sender in `SMTP_FROM` must be the Gmail address or a verified Gmail “Send mail as” alias. A Gmail `535` response means the username/password pair was rejected — regenerate the App Password and make sure 2-Step Verification is enabled.
+
 - **Invitations** send immediately. If SMTP is unavailable, the invite still exists and the dialog keeps the copyable link.
 - **In-app notifications** queue an email in the same PostgreSQL transaction as the notification. A worker inside the app delivers pending messages every 15 seconds, retries transient failures up to five times, and recovers stale claims after a crash.
 - Default email notification types are `assigned`, `mentioned`, and `comment`. Set `EMAIL_NOTIFICATION_TYPES=assigned,mentioned,comment,task_updated` to also email every followed-task update, or leave it empty to disable notification email while keeping invitation email enabled.
@@ -366,7 +379,8 @@ After `db:reset`, run `pnpm db:migrate && pnpm db:seed`. Production deploys do n
 | `SMTP_HOST` | No | SMTP hostname; enables transactional email when set with `SMTP_FROM` |
 | `SMTP_PORT` | No | SMTP port (default 587; 465 enables implicit TLS automatically) |
 | `SMTP_SECURE` | No | Set to `true` for implicit TLS on non-465 ports |
-| `SMTP_USER`, `SMTP_PASSWORD` | No | SMTP authentication credentials |
+| `SMTP_LOCAL_ADDRESS` | No | Outgoing bind address (defaults to `0.0.0.0`) |
+| `SMTP_USER` / `SMTP_USERNAME`, `SMTP_PASSWORD` | No | SMTP authentication credentials (`SMTP_USERNAME` is the Gmail-friendly alias) |
 | `SMTP_FROM` | With SMTP | Verified sender, e.g. `Hub <notifications@example.com>` |
 | `SMTP_REPLY_TO` | No | Optional Reply-To address |
 | `EMAIL_NOTIFICATION_TYPES` | No | Comma-separated notification types to email (default `assigned,mentioned,comment`) |
@@ -449,6 +463,7 @@ docker-compose.prod.yml      App + PostgreSQL + optional Caddy
 | Create, edit, and assign tasks | ✓ | ✓ | ✓ |
 | Add subtasks and related links | ✓ | ✓ | ✓ |
 | Comment, mention teammates, follow tasks | ✓ | ✓ | ✓ |
+| Delete tasks (including their subtasks and comments) | ✓ | ✓ | ✓ |
 | Create and edit workspace docs | ✓ | ✓ | ✓ |
 
 The last owner cannot be demoted or removed.
@@ -463,7 +478,8 @@ The last owner cannot be demoted or removed.
 - Every meaningful task change is written to the activity table with human-readable metadata.
 - Project list views show parent tasks grouped by status; subtasks are shown on the parent task with a count in the list.
 - Personal views exclude done and canceled tasks and exclude tasks from archived projects.
-- The task page supports inline title editing, rich-text saving, property changes, subtask creation, and related-task linking.
+- The task page supports inline title editing, rich-text saving, property changes, subtask creation, related-task linking, and deletion.
+- Deleting a task permanently removes its subtasks, comments, activity, links, and notifications after a confirmation dialog.
 
 ### Comments, activity & notifications
 

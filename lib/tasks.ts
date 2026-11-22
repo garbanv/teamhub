@@ -886,6 +886,43 @@ export async function updateTask(input: {
   return task;
 }
 
+export async function deleteTask(input: {
+  workspaceId: string;
+  taskId: string;
+}) {
+  const task = await query<{
+    id: string;
+    projectKey: string;
+    subtaskCount: number;
+  }>(
+    `
+      select
+        t.id,
+        p.key as "projectKey",
+        (
+          select count(*)::int
+          from tasks child
+          where child.parent_task_id = t.id
+        ) as "subtaskCount"
+      from tasks t
+      join projects p on p.id = t.project_id
+      where t.id = $1 and p.workspace_id = $2
+      limit 1
+    `,
+    [input.taskId, input.workspaceId],
+  );
+  const current = task.rows[0];
+  if (!current) throw new AppError("Task not found.", 404);
+
+  await query("delete from tasks where id = $1", [input.taskId]);
+
+  return {
+    id: current.id,
+    projectKey: current.projectKey,
+    subtaskCount: current.subtaskCount,
+  };
+}
+
 export async function createTaskLink(input: {
   workspaceId: string;
   taskId: string;
