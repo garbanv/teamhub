@@ -88,7 +88,8 @@ Notes:
 - Do not set `DATABASE_SSL` for the private internal connection.
 - If you access the app through both the apex and `www` domains, add both to `BETTER_AUTH_TRUSTED_ORIGINS`. The origin must match or Better Auth rejects the login/signup request with `Invalid origin`.
 - The container refuses to boot with the placeholder values from `.env.production.example` or a secret shorter than 32 characters.
-- Notification emails are queued in PostgreSQL and delivered by a worker inside the app process within about 15 seconds. No separate worker or cron job is needed; leave the app running normally.
+- Task notifications — in-app and email — are created only for tasks whose priority is **Urgent**. Invitation emails are unaffected.
+- Urgent-task notification emails are queued in PostgreSQL and delivered by a worker inside the app process within about 15 seconds. No separate worker or cron job is needed; leave the app running normally.
 - Invitations send email immediately when SMTP is configured. If SMTP is down or not configured, the invite dialog still shows a copyable link.
 
 ## 4. Deploy

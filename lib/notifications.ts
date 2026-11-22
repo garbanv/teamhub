@@ -121,6 +121,16 @@ export async function createNotification(
 ) {
   if (input.userId === input.actorId) return null;
 
+  // Notifications are intentionally limited to urgent work. This applies to
+  // both the in-app bell and the notification email outbox.
+  if (input.taskId) {
+    const priority = await client.query<{ priority: string }>(
+      "select priority from tasks where id = $1 limit 1",
+      [input.taskId],
+    );
+    if (priority.rows[0]?.priority !== "urgent") return null;
+  }
+
   const result = await client.query<{ id: string }>(
     `
       insert into notifications

@@ -49,7 +49,7 @@ A calm, keyboard-friendly team workspace inspired by [Linear](https://linear.app
 - Comments with an `@` mention picker, highlighted mentions, and mention notifications.
 - Per-task activity feed covering creation, title, description, status, assignee, priority, due date, labels, related links, and comments.
 - Follow/unfollow a task. Creators and assignees follow automatically, and mentioned teammates are added as followers.
-- In-app notifications for assignments, mentions, and changes or comments on followed tasks, with unread counts and mark-as-read controls.
+- In-app notifications for assignments, mentions, and changes or comments on followed **urgent** tasks, with unread counts and mark-as-read controls. Task notifications are only created when the task priority is **Urgent**.
 - Optional transactional email for invitations, assignments, mentions, and comments, delivered through Nodemailer and a durable outbox worker.
 
 ### Docs — phase 1
@@ -185,8 +185,9 @@ SMTP_FROM="Your Name <you@gmail.com>"
 `SMTP_USER` and `SMTP_PASS` are also accepted as aliases. The sender in `SMTP_FROM` must be the Gmail address or a verified Gmail “Send mail as” alias. A Gmail `535` response means the username/password pair was rejected — regenerate the App Password and make sure 2-Step Verification is enabled.
 
 - **Invitations** send immediately. If SMTP is unavailable, the invite still exists and the dialog keeps the copyable link.
-- **In-app notifications** queue an email in the same PostgreSQL transaction as the notification. A worker inside the app delivers pending messages every 15 seconds, retries transient failures up to five times, and recovers stale claims after a crash.
-- Default email notification types are `assigned`, `mentioned`, and `comment`. Set `EMAIL_NOTIFICATION_TYPES=assigned,mentioned,comment,task_updated` to also email every followed-task update, or leave it empty to disable notification email while keeping invitation email enabled.
+- **Urgent task notifications** create the in-app notification and queue its email in the same PostgreSQL transaction. Non-urgent tasks do not create task notifications or notification emails. A worker inside the app delivers pending messages every 15 seconds, retries transient failures up to five times, and recovers stale claims after a crash.
+- Task notifications are created only for tasks with **Urgent** priority, for both the bell and email.
+- Default email notification types are `assigned`, `mentioned`, and `comment`. Set `EMAIL_NOTIFICATION_TYPES=assigned,mentioned,comment,task_updated` to also email every followed urgent-task update, or leave it empty to disable notification email while keeping invitation email enabled.
 - The worker is part of the app process, so no separate worker container or cron job is required. Multiple app replicas are safe: `FOR UPDATE SKIP LOCKED` prevents duplicate claims.
 - Emails contain task/workspace deep links built from `BETTER_AUTH_URL`. Set it to the public URL.
 - A failed notification email never rolls back the underlying task, comment, or notification.
