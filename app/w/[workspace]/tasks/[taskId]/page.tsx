@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { TaskDetailView } from "@/components/workspace/task/task-detail-view";
 import { getTaskActivity } from "@/lib/activity";
 import { getTaskComments } from "@/lib/comments";
+import { canDeleteContent } from "@/lib/permissions";
 import { getProjectStatuses } from "@/lib/projects";
 import {
   getTaskById,
@@ -46,6 +47,10 @@ export default async function TaskPage({
       statuses={statuses}
       labels={labels}
       currentUser={user}
+      canDelete={canDeleteContent(
+        workspace.role,
+        workspace.membersCanDeleteTasks,
+      )}
       comments={comments}
       activities={activities}
       initialFollowing={following}

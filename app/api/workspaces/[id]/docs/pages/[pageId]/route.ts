@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { requireWorkspaceMember } from "@/lib/access";
+import { requireDeletePermission, requireWorkspaceMember } from "@/lib/access";
 import { requireApiUser, routeError } from "@/lib/api";
 import { deleteDocPage, getDocPage, updateDocPage } from "@/lib/docs";
 import { AppError } from "@/lib/errors";
@@ -31,7 +31,7 @@ export async function DELETE(
   try {
     const user = await requireApiUser();
     const { id, pageId } = await params;
-    await requireWorkspaceMember(id, user.id);
+    await requireDeletePermission(id, user.id, "docs");
     const result = await deleteDocPage({
       workspaceId: id,
       pageId,

@@ -19,6 +19,8 @@ type WorkspaceRow = {
   logoColor: string;
   role: WorkspaceRole;
   memberCount: number;
+  membersCanDeleteTasks: boolean;
+  membersCanDeleteDocs: boolean;
 };
 
 type MemberRow = {
@@ -63,7 +65,9 @@ export async function getWorkspacesForUser(
         w.slug,
         w.logo_color as "logoColor",
         m.role,
-        (select count(*)::int from workspace_members wmc where wmc.workspace_id = w.id) as "memberCount"
+        (select count(*)::int from workspace_members wmc where wmc.workspace_id = w.id) as "memberCount",
+        w.members_can_delete_tasks as "membersCanDeleteTasks",
+        w.members_can_delete_docs as "membersCanDeleteDocs"
       from workspace_members m
       join workspaces w on w.id = m.workspace_id
       where m.user_id = $1
@@ -87,7 +91,9 @@ export async function getWorkspaceForUser(
         w.slug,
         w.logo_color as "logoColor",
         m.role,
-        (select count(*)::int from workspace_members wmc where wmc.workspace_id = w.id) as "memberCount"
+        (select count(*)::int from workspace_members wmc where wmc.workspace_id = w.id) as "memberCount",
+        w.members_can_delete_tasks as "membersCanDeleteTasks",
+        w.members_can_delete_docs as "membersCanDeleteDocs"
       from workspace_members m
       join workspaces w on w.id = m.workspace_id
       where w.slug = $1 and m.user_id = $2
@@ -228,19 +234,56 @@ export async function createWorkspace(
       ...workspace,
       role: "owner" as const,
       memberCount: 1,
+      membersCanDeleteTasks: true,
+      membersCanDeleteDocs: true,
     };
   });
 }
 
-export async function renameWorkspace(workspaceId: string, name: string) {
-  const { rows } = await query<{ id: string; name: string; slug: string }>(
+export async function updateWorkspaceSettings(
+  workspaceId: string,
+  input: {
+    name?: string;
+    membersCanDeleteTasks?: boolean;
+    membersCanDeleteDocs?: boolean;
+  },
+) {
+  const { rows } = await query<{
+    id: string;
+    name: string;
+    slug: string;
+    membersCanDeleteTasks: boolean;
+    membersCanDeleteDocs: boolean;
+  }>(
     `
       update workspaces
-      set name = $2
+      set name = coalesce($2, name),
+          members_can_delete_tasks = coalesce($3, members_can_delete_tasks),
+          members_can_delete_docs = coalesce($4, members_can_delete_docs)
       where id = $1
-      returning id, name, slug
+      returning id, name, slug,
+        members_can_delete_tasks as "membersCanDeleteTasks",
+        members_can_delete_docs as "membersCanDeleteDocs"
     `,
-    [workspaceId, name],
+    [
+      workspaceId,
+      input.name ?? null,
+      input.membersCanDeleteTasks ?? null,
+      input.membersCanDeleteDocs ?? null,
+    ],
+  );
+  return rows[0] ?? null;
+}
+
+export async function getDeleteSettings(workspaceId: string) {
+  const { rows } = await query<{
+    membersCanDeleteTasks: boolean;
+    membersCanDeleteDocs: boolean;
+  }>(
+    `select members_can_delete_tasks as "membersCanDeleteTasks",
+            members_can_delete_docs as "membersCanDeleteDocs"
+     from workspaces where id = $1`,
+    [workspaceId],
   );
   return rows[0] ?? null;
 }

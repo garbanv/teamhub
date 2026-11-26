@@ -88,6 +88,7 @@ export function TaskDetailView({
   statuses,
   labels,
   currentUser,
+  canDelete,
   comments,
   activities,
   initialFollowing,
@@ -100,6 +101,7 @@ export function TaskDetailView({
   statuses: ProjectStatusItem[];
   labels: TaskLabel[];
   currentUser: SessionUser;
+  canDelete: boolean;
   comments: TaskComment[];
   activities: TaskActivityEntry[];
   initialFollowing: boolean;
@@ -461,28 +463,30 @@ export function TaskDetailView({
             {following ? "Following" : "Follow"}
           </span>
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="mt-1 shrink-0 text-muted-foreground"
-              aria-label="Task actions"
-            >
-              <MoreHorizontal className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={() => setDeleteOpen(true)}
-              className="gap-2"
-            >
-              <Trash2 className="size-3.5" />
-              Delete task
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {canDelete && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="mt-1 shrink-0 text-muted-foreground"
+                aria-label="Task actions"
+              >
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={() => setDeleteOpen(true)}
+                className="gap-2"
+              >
+                <Trash2 className="size-3.5" />
+                Delete task
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       <div className="hub-task-grid mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_17.875rem]">

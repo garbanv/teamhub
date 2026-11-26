@@ -8,13 +8,20 @@ export const createWorkspaceSchema = z.object({
     .max(60, "Workspace name must be 60 characters or fewer."),
 });
 
-export const updateWorkspaceSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "Workspace name must be at least 2 characters.")
-    .max(60, "Workspace name must be 60 characters or fewer."),
-});
+export const updateWorkspaceSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(2, "Workspace name must be at least 2 characters.")
+      .max(60, "Workspace name must be 60 characters or fewer.")
+      .optional(),
+    membersCanDeleteTasks: z.boolean().optional(),
+    membersCanDeleteDocs: z.boolean().optional(),
+  })
+  .refine((value) => Object.values(value).some((v) => v !== undefined), {
+    message: "Nothing to update.",
+  });
 
 export const createInvitationSchema = z.object({
   email: z.email("Enter a valid email address.").transform((value) => value.toLowerCase()),

@@ -28,7 +28,7 @@ import type {
   SessionUser,
   WorkspaceSummary,
 } from "@/lib/types";
-import { canManageWorkspace } from "@/lib/permissions";
+import { canDeleteContent, canManageWorkspace } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 
 type SidebarContentProps = {
@@ -250,6 +250,10 @@ export function SidebarContent({
             pages={docs}
             onNavigate={onNavigate}
             enableShortcut={enableDocsShortcut}
+            canDelete={canDeleteContent(
+              workspace.role,
+              workspace.membersCanDeleteDocs,
+            )}
           />
         </div>
 

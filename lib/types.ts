@@ -7,6 +7,8 @@ export type WorkspaceSummary = {
   logoColor: string;
   role: WorkspaceRole;
   memberCount: number;
+  membersCanDeleteTasks: boolean;
+  membersCanDeleteDocs: boolean;
 };
 
 export type WorkspaceMember = {

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { DocPageEditor } from "@/components/workspace/docs/doc-page-editor";
 import { getDocPage } from "@/lib/docs";
+import { canDeleteContent } from "@/lib/permissions";
 import { requireWorkspacePage } from "@/lib/workspace-page";
 
 export const metadata: Metadata = { title: "Page" };
@@ -23,6 +24,7 @@ export default async function DocPage({
       workspaceId={workspace.id}
       workspaceSlug={workspace.slug}
       currentUser={user}
+      canDelete={canDeleteContent(workspace.role, workspace.membersCanDeleteDocs)}
     />
   );
 }

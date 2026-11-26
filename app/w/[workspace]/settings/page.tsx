@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Mail, Settings2, Shield, Users } from "lucide-react";
 
 import { InviteMemberDialog } from "@/components/workspace/invite-member-dialog";
+import { DeletePermissionsForm } from "@/components/workspace/settings/delete-permissions-form";
 import { InvitationsList } from "@/components/workspace/settings/invitations-list";
 import { MembersList } from "@/components/workspace/settings/members-list";
 import { WorkspaceNameForm } from "@/components/workspace/settings/workspace-name-form";
@@ -76,6 +77,21 @@ export default async function SettingsPage({
             workspaceId={workspace.id}
             slug={workspace.slug}
             name={workspace.name}
+            canEdit={canManage}
+          />
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Permissions"
+            description="What regular members are allowed to delete."
+          />
+          <DeletePermissionsForm
+            workspaceId={workspace.id}
+            initial={{
+              membersCanDeleteTasks: workspace.membersCanDeleteTasks,
+              membersCanDeleteDocs: workspace.membersCanDeleteDocs,
+            }}
             canEdit={canManage}
           />
         </Card>

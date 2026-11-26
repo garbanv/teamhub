@@ -4,7 +4,7 @@ import { requireApiUser, routeError } from "@/lib/api";
 import { AppError } from "@/lib/errors";
 import { canManageWorkspace } from "@/lib/permissions";
 import { updateWorkspaceSchema } from "@/lib/validation";
-import { getWorkspaceRole, renameWorkspace } from "@/lib/workspaces";
+import { getWorkspaceRole, updateWorkspaceSettings } from "@/lib/workspaces";
 
 export const runtime = "nodejs";
 
@@ -23,7 +23,7 @@ export async function PATCH(
 
     const body = await request.json();
     const input = updateWorkspaceSchema.parse(body);
-    const workspace = await renameWorkspace(id, input.name);
+    const workspace = await updateWorkspaceSettings(id, input);
     return NextResponse.json({ workspace });
   } catch (error) {
     return routeError(error);

@@ -74,12 +74,14 @@ export function DocsSidebar({
   pages: incoming,
   onNavigate,
   enableShortcut = true,
+  canDelete = false,
 }: {
   workspaceId: string;
   workspaceSlug: string;
   pages: DocPageListItem[];
   onNavigate?: () => void;
   enableShortcut?: boolean;
+  canDelete?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -423,15 +425,19 @@ export function DocsSidebar({
                   <Plus className="size-3.5" />
                   Add subpage
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  variant="destructive"
-                  onSelect={() => setDeleteTarget(node)}
-                  className="gap-2"
-                >
-                  <Trash2 className="size-3.5" />
-                  Delete page
-                </DropdownMenuItem>
+                {canDelete && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={() => setDeleteTarget(node)}
+                      className="gap-2"
+                    >
+                      <Trash2 className="size-3.5" />
+                      Delete page
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

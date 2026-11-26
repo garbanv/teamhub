@@ -68,11 +68,13 @@ export function DocPageEditor({
   workspaceId,
   workspaceSlug,
   currentUser,
+  canDelete,
 }: {
   initialPage: DocPageDetail;
   workspaceId: string;
   workspaceSlug: string;
   currentUser: SessionUser;
+  canDelete: boolean;
 }) {
   const router = useRouter();
   const [page, setPage] = React.useState(initialPage);
@@ -345,28 +347,30 @@ export function DocPageEditor({
               image={currentUser.image}
               className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[0.375rem]"
             />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="text-muted-foreground"
-                  aria-label="Page actions"
-                >
-                  <MoreHorizontal className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  variant="destructive"
-                  onSelect={() => setDeleteOpen(true)}
-                  className="gap-2"
-                >
-                  <Trash2 className="size-3.5" />
-                  Delete page
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {canDelete && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-muted-foreground"
+                    aria-label="Page actions"
+                  >
+                    <MoreHorizontal className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onSelect={() => setDeleteOpen(true)}
+                    className="gap-2"
+                  >
+                    <Trash2 className="size-3.5" />
+                    Delete page
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
 
