@@ -229,10 +229,12 @@ export const updateDocPageSchema = z
     icon: z.string().max(32).nullable().optional(),
     coverUrl: z.string().max(2000).nullable().optional(),
     content: richTextSchema.optional(),
+    baseVersion: z.number().int().positive().optional(),
   })
-  .refine((value) => Object.keys(value).length > 0, {
-    message: "No page changes were provided.",
-  });
+  .refine(
+    (value) => Object.keys(value).some((key) => key !== "baseVersion"),
+    { message: "No page changes were provided." },
+  );
 
 export const moveDocPageSchema = z.object({
   parentId: z.string().uuid().nullable(),

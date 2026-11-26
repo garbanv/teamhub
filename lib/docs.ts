@@ -14,6 +14,7 @@ type PageRow = {
   ownerId: string;
   visibility: "workspace" | "teamspace" | "private";
   coverUrl: string | null;
+  version: number;
   content: unknown;
   contentText: string;
   createdById: string;
@@ -36,6 +37,7 @@ const pageSelect = `
     p.owner_id as "ownerId",
     p.visibility,
     p.cover_url as "coverUrl",
+    p.version,
     p.content,
     p.content_text as "contentText",
     p.created_by as "createdById",
@@ -69,6 +71,7 @@ function mapDetail(row: PageRow): DocPageDetail {
   return {
     ...mapListItem(row),
     coverUrl: row.coverUrl,
+    version: row.version,
     content: row.content ?? emptyRichText,
     contentText: row.contentText,
     createdById: row.createdById,
@@ -182,6 +185,11 @@ export async function updateDocPage(input: {
   icon?: string | null;
   coverUrl?: string | null;
   content?: unknown;
+  /**
+   * The content version the editor started from. When given together with
+   * `content`, the save is rejected with a 409 if someone else saved first.
+   */
+  baseVersion?: number;
 }): Promise<DocPageDetail> {
   const current = await getDocPage(
     input.workspaceId,
@@ -213,6 +221,15 @@ export async function updateDocPage(input: {
   if (nextContent !== undefined) {
     add("content", JSON.stringify(nextContent));
     add("content_text", nextContentText ?? "");
+    fields.push("version = version + 1");
+  }
+
+  const checkVersion =
+    nextContent !== undefined && input.baseVersion !== undefined;
+  let where = "id = $1 and workspace_id = $2";
+  if (checkVersion) {
+    values.push(input.baseVersion);
+    where += ` and version = $${values.length}`;
   }
 
   values.push(input.userId);
@@ -220,14 +237,22 @@ export async function updateDocPage(input: {
 
   if (fields.length === 0) return current;
 
-  await query(
+  const result = await query(
     `
       update doc_pages
       set ${fields.join(", ")}
-      where id = $1 and workspace_id = $2
+      where ${where}
     `,
     values,
   );
+
+  if (checkVersion && !result.rowCount) {
+    throw new AppError(
+      "This page was changed by someone else since you opened it.",
+      409,
+      "version_conflict",
+    );
+  }
 
   const page = await getDocPage(
     input.workspaceId,

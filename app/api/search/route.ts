@@ -20,7 +20,12 @@ export async function GET(request: Request) {
     const workspace = await getWorkspaceForUser(input.workspace, user.id);
     if (!workspace) throw new AppError("Workspace not found.", 404);
 
-    const results = await searchWorkspace(workspace.id, workspace.slug, input.q);
+    const results = await searchWorkspace(
+      workspace.id,
+      workspace.slug,
+      user.id,
+      input.q,
+    );
     return NextResponse.json({ results });
   } catch (error) {
     return routeError(error);

@@ -239,6 +239,8 @@ export type DocPageListItem = {
 };
 
 export type DocPageDetail = DocPageListItem & {
+  /** Incremented on every content change; used to detect conflicting saves. */
+  version: number;
   coverUrl: string | null;
   content: unknown;
   contentText: string;

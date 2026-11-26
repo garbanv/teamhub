@@ -1,18 +1,25 @@
 import { query } from "./db";
 import type { NavSearchResult } from "./types";
 
+/** Escapes LIKE wildcards so user input is matched literally. */
+export function escapeLike(value: string) {
+  return value.replace(/[\\%_]/g, (char) => `\\${char}`);
+}
+
 export async function searchWorkspace(
   workspaceId: string,
   workspaceSlug: string,
+  userId: string,
   q: string,
 ): Promise<NavSearchResult[]> {
   const term = q.trim();
   if (!term) return [];
 
-  const pattern = `%${term}%`;
-  const prefix = `${term}%`;
+  const escaped = escapeLike(term);
+  const pattern = `%${escaped}%`;
+  const prefix = `${escaped}%`;
 
-  const [projects, tasks] = await Promise.all([
+  const [projects, tasks, docs] = await Promise.all([
     query<{
       id: string;
       name: string;
@@ -73,6 +80,21 @@ export async function searchWorkspace(
       `,
       [workspaceId, pattern, prefix],
     ),
+    query<{ id: string; title: string; icon: string | null }>(
+      `
+        select id, title, icon
+        from doc_pages
+        where workspace_id = $1
+          and archived_at is null
+          and (visibility = 'workspace' or owner_id = $4)
+          and (title ilike $2 or content_text ilike $2)
+        order by
+          case when title ilike $3 then 0 when title ilike $2 then 1 else 2 end,
+          updated_at desc
+        limit 5
+      `,
+      [workspaceId, pattern, prefix, userId],
+    ),
   ]);
 
   const projectResults: NavSearchResult[] = projects.rows.map((project) => ({
@@ -95,5 +117,14 @@ export async function searchWorkspace(
     color: task.statusColor,
   }));
 
-  return [...projectResults, ...taskResults];
+  const docResults: NavSearchResult[] = docs.rows.map((page) => ({
+    id: page.id,
+    type: "page",
+    title: page.title,
+    href: `/w/${workspaceSlug}/docs/${page.id}`,
+    meta: "Doc",
+    subtitle: page.icon ?? undefined,
+  }));
+
+  return [...projectResults, ...taskResults, ...docResults];
 }

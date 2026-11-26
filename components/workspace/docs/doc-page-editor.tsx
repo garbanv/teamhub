@@ -63,6 +63,12 @@ const pageEmoji = [
 
 type SaveState = "saved" | "dirty" | "saving" | "error";
 
+class VersionConflictError extends Error {
+  constructor() {
+    super("This page was changed by someone else since you opened it.");
+  }
+}
+
 export function DocPageEditor({
   initialPage,
   workspaceId,
@@ -91,6 +97,13 @@ export function DocPageEditor({
   const latestContentRef = React.useRef<unknown>(initialPage.content);
   const dirtyRef = React.useRef(false);
   const saveTimerRef = React.useRef<number | null>(null);
+  // The content version this editor is based on. Only content saves move it,
+  // so a title/icon save can't hide someone else's newer content.
+  const versionRef = React.useRef(initialPage.version);
+  const conflictRef = React.useRef(false);
+  const saveChainRef = React.useRef<Promise<void>>(Promise.resolve());
+  const [conflict, setConflict] = React.useState<DocPageDetail | null>(null);
+  const [editorKey, setEditorKey] = React.useState(0);
 
   React.useEffect(() => {
     setPage(initialPage);
@@ -99,24 +112,82 @@ export function DocPageEditor({
     setCoverUrl(initialPage.coverUrl);
   }, [initialPage]);
 
+  React.useEffect(() => {
+    versionRef.current = initialPage.version;
+    conflictRef.current = false;
+    setConflict(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPage.id]);
+
+  React.useEffect(() => {
+    function warn(event: BeforeUnloadEvent) {
+      if (dirtyRef.current || conflictRef.current) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    }
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, []);
+
   async function patchPage(payload: Record<string, unknown>) {
+    const isContent = payload.content !== undefined;
     const response = await fetch(
       `/api/workspaces/${workspaceId}/docs/pages/${page.id}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(
+          isContent
+            ? { ...payload, baseVersion: versionRef.current }
+            : payload,
+        ),
       },
     );
     const data = (await response.json()) as {
       page?: DocPageDetail;
       error?: string;
+      code?: string;
     };
     if (!response.ok || !data.page) {
+      if (data.code === "version_conflict") throw new VersionConflictError();
       throw new Error(data.error || "Could not save the page.");
     }
+    if (isContent) versionRef.current = data.page.version;
     setPage(data.page);
     return data.page;
+  }
+
+  async function loadLatestPage() {
+    const response = await fetch(
+      `/api/workspaces/${workspaceId}/docs/pages/${page.id}`,
+    );
+    const data = (await response.json()) as { page?: DocPageDetail };
+    return data.page ?? null;
+  }
+
+  function loadTheirVersion() {
+    if (!conflict) return;
+    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    dirtyRef.current = false;
+    conflictRef.current = false;
+    versionRef.current = conflict.version;
+    latestContentRef.current = conflict.content;
+    setPage(conflict);
+    setTitle(conflict.title);
+    setIcon(conflict.icon);
+    setCoverUrl(conflict.coverUrl);
+    setEditorKey((key) => key + 1);
+    setConflict(null);
+    setSaveState("saved");
+  }
+
+  function keepMyVersion() {
+    if (!conflict) return;
+    versionRef.current = conflict.version;
+    conflictRef.current = false;
+    setConflict(null);
+    void flushContent();
   }
 
   async function saveTitle() {
@@ -152,23 +223,41 @@ export function DocPageEditor({
     }
   }
 
-  const flushContent = React.useCallback(async () => {
-    if (!dirtyRef.current) return;
+  // Saves run one at a time so each one starts from the previous save's version.
+  const flushContent = React.useCallback(() => {
     if (saveTimerRef.current) {
       window.clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
     }
-    setSaveState("saving");
-    try {
-      await patchPage({ content: latestContentRef.current });
-      dirtyRef.current = false;
-      setSaveState("saved");
-    } catch (error) {
-      setSaveState("error");
-      toast.error(
-        error instanceof Error ? error.message : "Could not save the page.",
-      );
-    }
+    const run = async () => {
+      if (!dirtyRef.current || conflictRef.current) return;
+      const snapshot = latestContentRef.current;
+      setSaveState("saving");
+      try {
+        await patchPage({ content: snapshot });
+        if (latestContentRef.current === snapshot) {
+          dirtyRef.current = false;
+          setSaveState("saved");
+        } else {
+          setSaveState("dirty");
+        }
+      } catch (error) {
+        setSaveState("error");
+        if (error instanceof VersionConflictError) {
+          conflictRef.current = true;
+          const latest = await loadLatestPage().catch(() => null);
+          if (latest) setConflict(latest);
+          else conflictRef.current = false;
+          return;
+        }
+        toast.error(
+          error instanceof Error ? error.message : "Could not save the page.",
+        );
+      }
+    };
+    saveChainRef.current = saveChainRef.current.then(run);
+    return saveChainRef.current;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page.id, workspaceId]);
 
   function handleContentChange(json: unknown) {
@@ -404,8 +493,39 @@ export function DocPageEditor({
           <span>Created by {page.createdByName}</span>
         </div>
 
+        {conflict && (
+          <div
+            role="alert"
+            className="mt-5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3.5 py-3"
+          >
+            <p className="text-[0.8125rem] font-medium">
+              {conflict.lastEditedByName && conflict.lastEditedById !== currentUser.id
+                ? `${conflict.lastEditedByName} saved changes`
+                : "This page was changed elsewhere"}{" "}
+              while you were editing.
+            </p>
+            <p className="mt-0.5 text-[0.7188rem] leading-4 text-muted-foreground">
+              Your latest edits were not saved. Choose which version to keep.
+            </p>
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              <Button type="button" size="sm" onClick={keepMyVersion}>
+                Keep my version
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={loadTheirVersion}
+              >
+                Load their version
+              </Button>
+            </div>
+          </div>
+        )}
+
         <div className="mt-7">
           <DocEditor
+            key={editorKey}
             workspaceId={workspaceId}
             initialContent={page.content}
             onChange={handleContentChange}

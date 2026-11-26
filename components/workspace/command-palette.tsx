@@ -186,6 +186,7 @@ function CommandPalette({
   const canManage = canManageWorkspace(workspace.role);
   const projectResults = results.filter((result) => result.type === "project");
   const taskResults = results.filter((result) => result.type === "task");
+  const docResults = results.filter((result) => result.type === "page");
   const hasResults = results.length > 0;
   const trimmed = query.trim();
 
@@ -194,13 +195,13 @@ function CommandPalette({
       open={open}
       onOpenChange={onOpenChange}
       title="Command palette"
-      description="Search tasks and projects, or jump anywhere in Hub."
+      description="Search tasks, projects and docs, or jump anywhere in Hub."
       commandProps={{ shouldFilter: false }}
     >
       <CommandInput
         value={query}
         onValueChange={setQuery}
-        placeholder="Search tasks, projects, or jump to…"
+        placeholder="Search tasks, projects, docs, or jump to…"
       />
       <CommandList>
         {trimmed ? (
@@ -219,7 +220,7 @@ function CommandPalette({
                 </span>
                 <p className="text-[0.7812rem] font-medium">No matches yet</p>
                 <p className="max-w-[15.625rem] text-[0.7188rem] leading-4 text-muted-foreground">
-                  Try a project key like WEB, a task title, or a task number.
+                  Try a project key like WEB, a task title, a task number, or a docs page.
                 </p>
               </div>
             )}
@@ -269,6 +270,29 @@ function CommandPalette({
                     </span>
                     <span className="hidden text-[0.625rem] text-muted-foreground sm:inline">
                       {result.meta}
+                    </span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+
+            {docResults.length > 0 && (
+              <CommandGroup heading="Docs">
+                {docResults.map((result) => (
+                  <CommandItem
+                    key={result.id}
+                    value={`doc-${result.id}`}
+                    onSelect={() => go(result.href)}
+                  >
+                    {result.subtitle ? (
+                      <span className="flex size-5 items-center justify-center text-[0.8125rem]">
+                        {result.subtitle}
+                      </span>
+                    ) : (
+                      <FileText className="size-4 text-muted-foreground" />
+                    )}
+                    <span className="min-w-0 flex-1 truncate">
+                      {result.title}
                     </span>
                   </CommandItem>
                 ))}
