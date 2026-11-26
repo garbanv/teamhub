@@ -35,9 +35,15 @@ const taskColumns = `
   s.name as "statusName",
   s.color as "statusColor",
   s.category as "statusCategory",
-  t.assignee_id as "assigneeId",
-  assignee.name as "assigneeName",
-  assignee.image as "assigneeImage",
+  coalesce((
+    select jsonb_agg(
+      jsonb_build_object('id', u.id, 'name', u.name, 'image', u.image)
+      order by ta.created_at, u.name
+    )
+    from task_assignees ta
+    join "user" u on u.id = ta.user_id
+    where ta.task_id = t.id
+  ), '[]'::jsonb) as assignees,
   t.priority,
   to_char(t.due_date, 'YYYY-MM-DD') as "dueDate",
   t.parent_task_id as "parentTaskId",
@@ -64,7 +70,6 @@ const taskColumns = `
 const taskJoins = `
   join projects p on p.id = t.project_id
   join project_statuses s on s.id = t.status_id
-  left join "user" assignee on assignee.id = t.assignee_id
   left join "user" creator on creator.id = t.created_by
 `;
 
@@ -93,9 +98,7 @@ function mapTask(row: TaskRow): TaskListItem {
     statusName: row.statusName,
     statusColor: row.statusColor,
     statusCategory: row.statusCategory,
-    assigneeId: row.assigneeId,
-    assigneeName: row.assigneeName,
-    assigneeImage: row.assigneeImage,
+    assignees: Array.isArray(row.assignees) ? row.assignees : [],
     priority: row.priority,
     dueDate: row.dueDate,
     parentTaskId: row.parentTaskId,
@@ -129,10 +132,14 @@ export async function getTasksForProject(
 
   if (filters.assignee) {
     if (filters.assignee === "unassigned") {
-      conditions.push("t.assignee_id is null");
+      conditions.push(
+        "not exists (select 1 from task_assignees fa where fa.task_id = t.id)",
+      );
     } else {
       values.push(filters.assignee);
-      conditions.push(`t.assignee_id = $${values.length}`);
+      conditions.push(
+        `exists (select 1 from task_assignees fa where fa.task_id = t.id and fa.user_id = $${values.length})`,
+      );
     }
   }
   if (filters.status) {
@@ -231,7 +238,10 @@ export async function getTasksForUser(
       from tasks t
       ${taskJoins}
       where p.workspace_id = $1
-        and t.assignee_id = $2
+        and exists (
+          select 1 from task_assignees ta
+          where ta.task_id = t.id and ta.user_id = $2
+        )
         and p.archived_at is null
         and s.category not in ('done', 'canceled')
         ${viewFilter}
@@ -331,19 +341,42 @@ export async function getTaskById(
   };
 }
 
-async function assertWorkspaceMember(
+async function assertWorkspaceMembers(
   client: PoolClient,
   workspaceId: string,
-  userId: string | null | undefined,
+  userIds: string[],
 ) {
-  if (!userId) return;
-  const { rowCount } = await client.query(
-    "select 1 from workspace_members where workspace_id = $1 and user_id = $2",
-    [workspaceId, userId],
+  if (userIds.length === 0) return;
+  const { rows } = await client.query<{ userId: string }>(
+    `select user_id as "userId" from workspace_members
+     where workspace_id = $1 and user_id = any($2::text[])`,
+    [workspaceId, userIds],
   );
-  if (!rowCount) {
-    throw new AppError("That person is not a member of this workspace.", 400);
+  if (rows.length !== userIds.length) {
+    throw new AppError("One or more assignees are not members of this workspace.", 400);
   }
+}
+
+async function mapStatusToProject(
+  client: PoolClient,
+  targetProjectId: string,
+  status: { name: string; category: ProjectStatusCategory },
+) {
+  const byName = await client.query<{ id: string }>(
+    `select id from project_statuses
+     where project_id = $1 and lower(name) = lower($2)
+     order by position asc limit 1`,
+    [targetProjectId, status.name],
+  );
+  if (byName.rows[0]) return byName.rows[0].id;
+  const byCategory = await client.query<{ id: string }>(
+    `select id from project_statuses
+     where project_id = $1 and category = $2
+     order by position asc limit 1`,
+    [targetProjectId, status.category],
+  );
+  if (byCategory.rows[0]) return byCategory.rows[0].id;
+  return resolveDefaultStatus(client, targetProjectId);
 }
 
 async function validateLabelIds(
@@ -402,7 +435,7 @@ export async function createTask(input: {
   title: string;
   description?: unknown;
   statusId?: string | null;
-  assigneeId?: string | null;
+  assigneeIds?: string[];
   priority?: TaskPriority;
   dueDate?: string | null;
   labelIds?: string[];
@@ -439,7 +472,8 @@ export async function createTask(input: {
       }
     }
 
-    await assertWorkspaceMember(client, input.workspaceId, input.assigneeId);
+    const assigneeIds = [...new Set(input.assigneeIds ?? [])];
+    await assertWorkspaceMembers(client, input.workspaceId, assigneeIds);
 
     let statusId = input.statusId ?? null;
     if (statusId) {
@@ -479,10 +513,10 @@ export async function createTask(input: {
       `
         insert into tasks (
           project_id, number, title, description, description_text,
-          status_id, assignee_id, priority, due_date, parent_task_id,
+          status_id, priority, due_date, parent_task_id,
           sort_order, created_by
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         returning id
       `,
       [
@@ -492,7 +526,6 @@ export async function createTask(input: {
         JSON.stringify(description),
         descriptionText,
         statusId,
-        input.assigneeId ?? null,
         input.priority ?? "none",
         input.dueDate ?? null,
         input.parentTaskId ?? null,
@@ -511,14 +544,18 @@ export async function createTask(input: {
     }
 
     await addTaskFollower(client, id, input.actorId);
-    if (input.assigneeId) {
-      await addTaskFollower(client, id, input.assigneeId);
-      if (input.assigneeId !== input.actorId) {
+    for (const assigneeId of assigneeIds) {
+      await client.query(
+        "insert into task_assignees (task_id, user_id) values ($1, $2)",
+        [id, assigneeId],
+      );
+      await addTaskFollower(client, id, assigneeId);
+      if (assigneeId !== input.actorId) {
         const actorName = await getActorName(client, input.actorId);
         const identifier = `${projectRow.key}-${number}`;
         await createNotification(client, {
           workspaceId: input.workspaceId,
-          userId: input.assigneeId,
+          userId: assigneeId,
           actorId: input.actorId,
           taskId: id,
           type: "assigned",
@@ -550,7 +587,8 @@ export async function updateTask(input: {
   title?: string;
   description?: unknown;
   statusId?: string;
-  assigneeId?: string | null;
+  assigneeIds?: string[];
+  projectId?: string;
   priority?: TaskPriority;
   dueDate?: string | null;
   labelIds?: string[];
@@ -559,6 +597,10 @@ export async function updateTask(input: {
     const currentResult = await client.query<{
       id: string;
       projectId: string;
+      projectKey: string;
+      projectName: string;
+      number: number;
+      parentTaskId: string | null;
       identifier: string;
       title: string;
       description: unknown;
@@ -566,8 +608,6 @@ export async function updateTask(input: {
       statusId: string;
       statusName: string;
       statusCategory: ProjectStatusCategory;
-      assigneeId: string | null;
-      assigneeName: string | null;
       priority: TaskPriority;
       dueDate: string | null;
       completedAt: Date | null;
@@ -576,6 +616,10 @@ export async function updateTask(input: {
         select
           t.id,
           t.project_id as "projectId",
+          p.key as "projectKey",
+          p.name as "projectName",
+          t.number,
+          t.parent_task_id as "parentTaskId",
           (p.key || '-' || t.number::text) as identifier,
           t.title,
           t.description,
@@ -583,15 +627,12 @@ export async function updateTask(input: {
           t.status_id as "statusId",
           s.name as "statusName",
           s.category as "statusCategory",
-          t.assignee_id as "assigneeId",
-          assignee.name as "assigneeName",
           t.priority,
           to_char(t.due_date, 'YYYY-MM-DD') as "dueDate",
           t.completed_at as "completedAt"
         from tasks t
         join projects p on p.id = t.project_id
         join project_statuses s on s.id = t.status_id
-        left join "user" assignee on assignee.id = t.assignee_id
         where t.id = $1 and p.workspace_id = $2
         for update of t
       `,
@@ -603,12 +644,78 @@ export async function updateTask(input: {
 
     const actorName = await getActorName(client, input.actorId);
 
-    if (input.assigneeId !== undefined) {
-      await assertWorkspaceMember(
-        client,
-        input.workspaceId,
-        input.assigneeId,
+    const currentAssignees = (
+      await client.query<{ id: string; name: string }>(
+        `select u.id, u.name
+         from task_assignees ta
+         join "user" u on u.id = ta.user_id
+         where ta.task_id = $1`,
+        [current.id],
+      )
+    ).rows;
+    const currentAssigneeIds = new Set(currentAssignees.map((a) => a.id));
+    const nextAssigneeIds = input.assigneeIds
+      ? [...new Set(input.assigneeIds)]
+      : [...currentAssigneeIds];
+    if (input.assigneeIds) {
+      await assertWorkspaceMembers(client, input.workspaceId, nextAssigneeIds);
+    }
+    const nextAssigneeIdSet = new Set(nextAssigneeIds);
+    const addedAssigneeIds = nextAssigneeIds.filter(
+      (id) => !currentAssigneeIds.has(id),
+    );
+    const removedAssignees = currentAssignees.filter(
+      (a) => !nextAssigneeIdSet.has(a.id),
+    );
+    const addedAssignees = addedAssigneeIds.length
+      ? (
+          await client.query<{ id: string; name: string }>(
+            'select id, name from "user" where id = any($1::text[])',
+            [addedAssigneeIds],
+          )
+        ).rows
+      : [];
+    const assigneesChanged =
+      addedAssignees.length > 0 || removedAssignees.length > 0;
+
+    // Moving to another project --------------------------------------
+    const moving = Boolean(
+      input.projectId && input.projectId !== current.projectId,
+    );
+    let targetProject = {
+      id: current.projectId,
+      key: current.projectKey,
+      name: current.projectName,
+    };
+    if (moving) {
+      if (current.parentTaskId) {
+        throw new AppError(
+          "Subtasks move with their parent task. Move the parent instead.",
+          400,
+        );
+      }
+      const target = await client.query<{
+        id: string;
+        key: string;
+        name: string;
+        archivedAt: Date | null;
+      }>(
+        `select id, key, name, archived_at as "archivedAt"
+         from projects
+         where id = $1 and workspace_id = $2
+         for update`,
+        [input.projectId, input.workspaceId],
       );
+      const targetRow = target.rows[0];
+      if (!targetRow) throw new AppError("Project not found.", 404);
+      if (targetRow.archivedAt) {
+        throw new AppError("You can't move tasks into an archived project.", 409);
+      }
+      targetProject = {
+        id: targetRow.id,
+        key: targetRow.key,
+        name: targetRow.name,
+      };
     }
 
     let status = {
@@ -616,12 +723,90 @@ export async function updateTask(input: {
       name: current.statusName,
       category: current.statusCategory,
     };
-    if (input.statusId && input.statusId !== current.statusId) {
+    if (moving) {
+      if (input.statusId) {
+        status = await assertStatusForProject(
+          client,
+          targetProject.id,
+          input.statusId,
+        );
+      } else {
+        const mappedId = await mapStatusToProject(client, targetProject.id, {
+          name: current.statusName,
+          category: current.statusCategory,
+        });
+        status = await assertStatusForProject(client, targetProject.id, mappedId);
+      }
+    } else if (input.statusId && input.statusId !== current.statusId) {
       status = await assertStatusForProject(
         client,
         current.projectId,
         input.statusId,
       );
+    }
+
+    let identifier = current.identifier;
+    let movedSubtaskCount = 0;
+    if (moving) {
+      const allocate = async () => {
+        const counter = await client.query<{ taskCounter: number }>(
+          `update projects set task_counter = task_counter + 1
+           where id = $1 returning task_counter as "taskCounter"`,
+          [targetProject.id],
+        );
+        const value = counter.rows[0]?.taskCounter;
+        if (!value) throw new AppError("Could not allocate a task number.", 500);
+        return value;
+      };
+      const nextSort = async (statusId: string) =>
+        (
+          await client.query<{ sortOrder: number }>(
+            `select coalesce(max(sort_order), 0) + 1 as "sortOrder"
+             from tasks where project_id = $1 and status_id = $2`,
+            [targetProject.id, statusId],
+          )
+        ).rows[0]?.sortOrder ?? 1;
+
+      const newNumber = await allocate();
+      await client.query(
+        `update tasks
+         set project_id = $2, number = $3, status_id = $4, sort_order = $5
+         where id = $1`,
+        [current.id, targetProject.id, newNumber, status.id, await nextSort(status.id)],
+      );
+      identifier = `${targetProject.key}-${newNumber}`;
+
+      const subtasks = await client.query<{
+        id: string;
+        statusName: string;
+        statusCategory: ProjectStatusCategory;
+      }>(
+        `select t.id, s.name as "statusName", s.category as "statusCategory"
+         from tasks t
+         join project_statuses s on s.id = t.status_id
+         where t.parent_task_id = $1
+         order by t.number asc`,
+        [current.id],
+      );
+      for (const subtask of subtasks.rows) {
+        const subStatusId = await mapStatusToProject(client, targetProject.id, {
+          name: subtask.statusName,
+          category: subtask.statusCategory,
+        });
+        await client.query(
+          `update tasks
+           set project_id = $2, number = $3, status_id = $4, sort_order = $5
+           where id = $1`,
+          [
+            subtask.id,
+            targetProject.id,
+            await allocate(),
+            subStatusId,
+            await nextSort(subStatusId),
+          ],
+        );
+      }
+      movedSubtaskCount = subtasks.rows.length;
     }
 
     const labelIds = input.labelIds ? [...new Set(input.labelIds)] : null;
@@ -676,25 +861,11 @@ export async function updateTask(input: {
     }
 
     const nextTitle = input.title ?? current.title;
-    const nextAssigneeId =
-      input.assigneeId !== undefined ? input.assigneeId : current.assigneeId;
     const nextPriority = input.priority ?? current.priority;
     const nextDueDate =
       input.dueDate !== undefined ? input.dueDate : current.dueDate;
 
-    let nextAssigneeName: string | null = current.assigneeName;
-    if (nextAssigneeId && nextAssigneeId !== current.assigneeId) {
-      const assignee = await client.query<{ name: string }>(
-        'select name from "user" where id = $1',
-        [nextAssigneeId],
-      );
-      nextAssigneeName = assignee.rows[0]?.name ?? null;
-    }
-    if (!nextAssigneeId) nextAssigneeName = null;
-
-    const statusChanged = status.id !== current.statusId;
-    const assigneeChanged =
-      input.assigneeId !== undefined && input.assigneeId !== current.assigneeId;
+    const statusChanged = !moving && status.id !== current.statusId;
     const priorityChanged =
       input.priority !== undefined && input.priority !== current.priority;
     const dueDateChanged =
@@ -709,10 +880,9 @@ export async function updateTask(input: {
           description = $3,
           description_text = $4,
           status_id = $5,
-          assignee_id = $6,
-          priority = $7,
-          due_date = $8,
-          completed_at = $9
+          priority = $6,
+          due_date = $7,
+          completed_at = $8
         where id = $1
       `,
       [
@@ -721,12 +891,26 @@ export async function updateTask(input: {
         JSON.stringify(nextDescription),
         nextDescriptionText,
         status.id,
-        nextAssigneeId,
         nextPriority,
         nextDueDate,
         completedAt,
       ],
     );
+
+    if (assigneesChanged) {
+      if (removedAssignees.length > 0) {
+        await client.query(
+          "delete from task_assignees where task_id = $1 and user_id = any($2::text[])",
+          [current.id, removedAssignees.map((a) => a.id)],
+        );
+      }
+      for (const added of addedAssignees) {
+        await client.query(
+          "insert into task_assignees (task_id, user_id) values ($1, $2) on conflict do nothing",
+          [current.id, added.id],
+        );
+      }
+    }
 
     if (labelIds && labelsChanged) {
       await client.query("delete from task_labels where task_id = $1", [
@@ -778,22 +962,46 @@ export async function updateTask(input: {
       });
     }
 
-    if (assigneeChanged) {
-      changes.push(
-        nextAssigneeName
-          ? `assigned to ${nextAssigneeName}`
-          : "removed the assignee",
-      );
+    if (moving) {
+      changes.push(`moved to ${targetProject.name}`);
+      await logTaskActivity(client, {
+        taskId: current.id,
+        actorId: input.actorId,
+        type: "project_changed",
+        field: "project",
+        fromValue: current.projectId,
+        toValue: targetProject.id,
+        metadata: {
+          fromName: current.projectName,
+          toName: targetProject.name,
+          fromIdentifier: current.identifier,
+          toIdentifier: identifier,
+          subtasksMoved: movedSubtaskCount,
+        },
+      });
+    }
+
+    if (assigneesChanged) {
+      if (addedAssignees.length > 0) {
+        changes.push(
+          `assigned to ${addedAssignees.map((a) => a.name).join(", ")}`,
+        );
+      }
+      if (removedAssignees.length > 0) {
+        changes.push(
+          `unassigned ${removedAssignees.map((a) => a.name).join(", ")}`,
+        );
+      }
       await logTaskActivity(client, {
         taskId: current.id,
         actorId: input.actorId,
         type: "assignee_changed",
-        field: "assignee",
-        fromValue: current.assigneeId,
-        toValue: nextAssigneeId,
+        field: "assignees",
         metadata: {
-          fromName: current.assigneeName,
-          toName: nextAssigneeName,
+          addedIds: addedAssignees.map((a) => a.id),
+          addedNames: addedAssignees.map((a) => a.name),
+          removedIds: removedAssignees.map((a) => a.id),
+          removedNames: removedAssignees.map((a) => a.name),
         },
       });
     }
@@ -852,16 +1060,16 @@ export async function updateTask(input: {
       });
     }
 
-    if (assigneeChanged && nextAssigneeId) {
-      await addTaskFollower(client, current.id, nextAssigneeId);
-      if (nextAssigneeId !== input.actorId) {
+    for (const added of addedAssignees) {
+      await addTaskFollower(client, current.id, added.id);
+      if (added.id !== input.actorId) {
         await createNotification(client, {
           workspaceId: input.workspaceId,
-          userId: nextAssigneeId,
+          userId: added.id,
           actorId: input.actorId,
           taskId: current.id,
           type: "assigned",
-          title: `${actorName} assigned you ${current.identifier}`,
+          title: `${actorName} assigned you ${identifier}`,
           body: nextTitle,
         });
       }
@@ -873,10 +1081,9 @@ export async function updateTask(input: {
         taskId: current.id,
         actorId: input.actorId,
         type: "task_updated",
-        title: `${actorName} updated ${current.identifier}`,
+        title: `${actorName} updated ${identifier}`,
         body: changes.join(" · "),
-        excludeUserIds:
-          assigneeChanged && nextAssigneeId ? [nextAssigneeId] : [],
+        excludeUserIds: addedAssignees.map((a) => a.id),
       });
     }
   });

@@ -9,6 +9,7 @@ import {
   CalendarDays,
   ChevronDown,
   CircleAlert,
+  FolderKanban,
   CornerDownLeft,
   Link2,
   ListTree,
@@ -28,6 +29,8 @@ import { RichTextEditor } from "@/components/workspace/rich-text-editor";
 import { DeleteTaskDialog } from "@/components/workspace/task/delete-task-dialog";
 import { TaskConversation } from "@/components/workspace/task/task-conversation";
 import { UserAvatar } from "@/components/user-avatar";
+import { AssigneePicker } from "@/components/workspace/task/assignee-picker";
+import { AssigneeStack } from "@/components/workspace/task/assignee-stack";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,6 +63,7 @@ import { priorityMeta, statusCategoryMeta } from "@/lib/colors";
 import { statusCategoryOrder } from "@/lib/project-constants";
 import type {
   NavSearchResult,
+  ProjectNavItem,
   ProjectStatusItem,
   SessionUser,
   TaskActivityEntry,
@@ -80,6 +84,7 @@ export function TaskDetailView({
   workspaceId,
   workspaceSlug,
   members,
+  projects,
   statuses,
   labels,
   currentUser,
@@ -91,6 +96,7 @@ export function TaskDetailView({
   workspaceId: string;
   workspaceSlug: string;
   members: WorkspaceMember[];
+  projects: ProjectNavItem[];
   statuses: ProjectStatusItem[];
   labels: TaskLabel[];
   currentUser: SessionUser;
@@ -188,8 +194,21 @@ export function TaskDetailView({
     router.refresh();
   }
 
-  async function setAssignee(value: string) {
-    await patchTask({ assigneeId: value === "unassigned" ? null : value });
+  async function setAssignees(ids: string[]) {
+    await patchTask({ assigneeIds: ids }, "assignees");
+  }
+
+  async function moveToProject(projectId: string) {
+    if (projectId === task.projectId) return;
+    const target = projects.find((project) => project.id === projectId);
+    const moved = await patchTask({ projectId }, "project");
+    if (moved) {
+      toast.success(
+        `Moved to ${target?.name ?? "the new project"} as ${moved.identifier}.`,
+      );
+      router.replace(`/w/${workspaceSlug}/tasks/${moved.id}`);
+      router.refresh();
+    }
   }
 
   async function setPriority(value: TaskPriority) {
@@ -362,8 +381,8 @@ export function TaskDetailView({
     .filter((group) => group.statuses.length > 0);
 
   return (
-    <div className="mx-auto w-full max-w-[1080px] px-5 py-6 sm:px-7 lg:px-10 lg:py-8">
-      <div className="mb-5 flex flex-wrap items-center gap-2 text-[10.5px] text-muted-foreground">
+    <div className="mx-auto w-full max-w-[67.5rem] px-5 py-6 sm:px-7 lg:px-10 lg:py-8">
+      <div className="mb-5 flex flex-wrap items-center gap-2 text-[0.6562rem] text-muted-foreground">
         <Link
           href={`/w/${workspaceSlug}/projects/${task.projectKey}`}
           className="flex items-center gap-1.5 transition-colors hover:text-foreground"
@@ -398,11 +417,11 @@ export function TaskDetailView({
         />
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex items-center gap-2">
-            <span className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground/60 uppercase">
+            <span className="font-mono text-[0.625rem] tracking-[0.12em] text-muted-foreground/60 uppercase">
               {task.identifier}
             </span>
             {savingTitle && (
-              <span className="flex items-center gap-1 text-[9.5px] text-muted-foreground/50">
+              <span className="flex items-center gap-1 text-[0.5938rem] text-muted-foreground/50">
                 <Loader2 className="size-2.5 animate-spin" />
                 Saving
               </span>
@@ -420,7 +439,7 @@ export function TaskDetailView({
             }}
             maxLength={500}
             aria-label="Task title"
-            className="w-full rounded-sm border-b border-transparent bg-transparent pb-1 text-[25px] leading-tight font-semibold tracking-[-0.035em] outline-none transition-colors focus:border-border sm:text-[28px]"
+            className="w-full rounded-sm border-b border-transparent bg-transparent pb-1 text-[1.5625rem] leading-tight font-semibold tracking-[-0.035em] outline-none transition-colors focus:border-border sm:text-[1.75rem]"
           />
         </div>
         <Button
@@ -466,10 +485,10 @@ export function TaskDetailView({
         </DropdownMenu>
       </div>
 
-      <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_286px]">
-        <div className="order-2 min-w-0 lg:order-1">
+      <div className="hub-task-grid mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_17.875rem]">
+        <div className="hub-task-main order-2 min-w-0 lg:order-1">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground/60 uppercase">
+            <p className="text-[0.625rem] font-medium tracking-[0.12em] text-muted-foreground/60 uppercase">
               Description
             </p>
           </div>
@@ -484,10 +503,10 @@ export function TaskDetailView({
 
           <section className="mt-8">
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground/65 uppercase">
+              <h2 className="flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.1em] text-muted-foreground/65 uppercase">
                 <ListTree className="size-3.5" />
                 Subtasks
-                <span className="text-[9px] font-normal text-muted-foreground/40">
+                <span className="text-[0.5625rem] font-normal text-muted-foreground/40">
                   {task.subtasks.length}
                 </span>
               </h2>
@@ -495,7 +514,7 @@ export function TaskDetailView({
 
             <div className="overflow-hidden rounded-lg border border-border/80 bg-card">
               {task.subtasks.length === 0 ? (
-                <p className="px-3 py-3 text-[11px] text-muted-foreground/60">
+                <p className="px-3 py-3 text-[0.6875rem] text-muted-foreground/60">
                   Break this task into smaller steps when it helps.
                 </p>
               ) : (
@@ -504,23 +523,23 @@ export function TaskDetailView({
                     <Link
                       key={subtask.id}
                       href={taskHref(workspaceSlug, subtask.id)}
-                      className="flex h-9 items-center gap-2 px-3 text-[11.5px] transition-colors hover:bg-muted/30"
+                      className="flex h-9 items-center gap-2 px-3 text-[0.7188rem] transition-colors hover:bg-muted/30"
                     >
                       <span
                         className="size-1.5 shrink-0 rounded-full"
                         style={{ backgroundColor: subtask.statusColor }}
                       />
-                      <span className="font-mono text-[9px] text-muted-foreground/50">
+                      <span className="font-mono text-[0.5625rem] text-muted-foreground/50">
                         {subtask.identifier}
                       </span>
                       <span className="min-w-0 flex-1 truncate">
                         {subtask.title}
                       </span>
-                      {subtask.assigneeName && (
-                        <UserAvatar
-                          name={subtask.assigneeName}
-                          image={subtask.assigneeImage}
-                          className="size-4 border-0 [&_[data-slot=avatar-fallback]]:text-[6px]"
+                      {subtask.assignees.length > 0 && (
+                        <AssigneeStack
+                          assignees={subtask.assignees}
+                          max={2}
+                          avatarClassName="size-4 border-0 [&_[data-slot=avatar-fallback]]:text-[0.375rem]"
                         />
                       )}
                     </Link>
@@ -537,14 +556,14 @@ export function TaskDetailView({
                   onChange={(event) => setSubtaskTitle(event.target.value)}
                   placeholder="Add a subtask…"
                   maxLength={500}
-                  className="h-7 min-w-0 flex-1 bg-transparent px-1 text-[11.5px] outline-none placeholder:text-muted-foreground/45"
+                  className="h-7 min-w-0 flex-1 bg-transparent px-1 text-[0.7188rem] outline-none placeholder:text-muted-foreground/45"
                 />
                 <Button
                   type="submit"
                   size="sm"
                   variant="ghost"
                   disabled={!subtaskTitle.trim() || addingSubtask}
-                  className="h-6 px-2 text-[10px]"
+                  className="h-6 px-2 text-[0.625rem]"
                 >
                   {addingSubtask ? (
                     <Loader2 className="size-3 animate-spin" />
@@ -558,17 +577,17 @@ export function TaskDetailView({
 
           <section className="mt-8">
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground/65 uppercase">
+              <h2 className="flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.1em] text-muted-foreground/65 uppercase">
                 <Link2 className="size-3.5" />
                 Related tasks
-                <span className="text-[9px] font-normal text-muted-foreground/40">
+                <span className="text-[0.5625rem] font-normal text-muted-foreground/40">
                   {task.relatedTasks.length}
                 </span>
               </h2>
               <button
                 type="button"
                 onClick={() => setLinkOpen(true)}
-                className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-1 text-[0.625rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <Plus className="size-3" />
                 Link task
@@ -577,7 +596,7 @@ export function TaskDetailView({
 
             <div className="overflow-hidden rounded-lg border border-border/80 bg-card">
               {task.relatedTasks.length === 0 ? (
-                <p className="px-3 py-3 text-[11px] text-muted-foreground/60">
+                <p className="px-3 py-3 text-[0.6875rem] text-muted-foreground/60">
                   Link tasks that depend on each other or share context.
                 </p>
               ) : (
@@ -585,13 +604,13 @@ export function TaskDetailView({
                   {task.relatedTasks.map((related) => (
                     <div
                       key={related.linkId}
-                      className="group flex h-9 items-center gap-2 px-3 text-[11.5px] transition-colors hover:bg-muted/30"
+                      className="group flex h-9 items-center gap-2 px-3 text-[0.7188rem] transition-colors hover:bg-muted/30"
                     >
                       <span
                         className="size-1.5 shrink-0 rounded-full"
                         style={{ backgroundColor: related.statusColor }}
                       />
-                      <span className="font-mono text-[9px] text-muted-foreground/50">
+                      <span className="font-mono text-[0.5625rem] text-muted-foreground/50">
                         {related.identifier}
                       </span>
                       <Link
@@ -625,10 +644,10 @@ export function TaskDetailView({
           />
         </div>
 
-        <aside className="order-1 lg:order-2">
-          <div className="rounded-xl border border-border/80 bg-card p-3.5 lg:sticky lg:top-[68px]">
+        <aside className="hub-task-aside order-1 lg:order-2">
+          <div className="hub-task-props rounded-xl border border-border/80 bg-card p-3.5 lg:sticky lg:top-[68px]">
             <div className="mb-2 flex items-center justify-between px-0.5">
-              <h2 className="text-[10px] font-semibold tracking-[0.12em] text-muted-foreground/60 uppercase">
+              <h2 className="text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground/60 uppercase">
                 Properties
               </h2>
               {savingField && (
@@ -639,7 +658,7 @@ export function TaskDetailView({
             <div className="space-y-0.5">
               <PropertyRow label="Status" icon={CircleAlert}>
                 <Select value={task.statusId} onValueChange={setStatus}>
-                  <SelectTrigger className="h-8 w-full border-transparent bg-transparent px-1.5 text-[11.5px] shadow-none hover:bg-accent focus-visible:ring-0">
+                  <SelectTrigger className="h-8 w-full border-transparent bg-transparent px-1.5 text-[0.7188rem] shadow-none hover:bg-accent focus-visible:ring-0">
                     <span className="flex min-w-0 items-center gap-1.5">
                       <span
                         className="size-1.5 rounded-full"
@@ -665,30 +684,48 @@ export function TaskDetailView({
                 </Select>
               </PropertyRow>
 
-              <PropertyRow label="Assignee" icon={UserRound}>
+              <PropertyRow label="Assignees" icon={UserRound}>
+                <AssigneePicker
+                  members={members}
+                  value={task.assignees.map((assignee) => assignee.id)}
+                  onChange={setAssignees}
+                  disabled={savingField === "assignees"}
+                />
+              </PropertyRow>
+
+              <PropertyRow label="Project" icon={FolderKanban}>
                 <Select
-                  value={task.assigneeId ?? "unassigned"}
-                  onValueChange={setAssignee}
+                  value={task.projectId}
+                  onValueChange={moveToProject}
+                  disabled={savingField === "project" || Boolean(task.parentTask)}
                 >
-                  <SelectTrigger className="h-8 w-full border-transparent bg-transparent px-1.5 text-[11.5px] shadow-none hover:bg-accent focus-visible:ring-0">
+                  <SelectTrigger
+                    className="h-8 w-full border-transparent bg-transparent px-1.5 text-[0.7188rem] shadow-none hover:bg-accent focus-visible:ring-0"
+                    title={
+                      task.parentTask
+                        ? "Subtasks move with their parent task"
+                        : undefined
+                    }
+                  >
                     <span className="flex min-w-0 items-center gap-1.5">
-                      {task.assigneeName ? (
-                        <UserAvatar
-                          name={task.assigneeName}
-                          image={task.assigneeImage}
-                          className="size-4 border-0 [&_[data-slot=avatar-fallback]]:text-[6px]"
-                        />
-                      ) : null}
+                      <span
+                        className="size-2 shrink-0 rounded-[2px]"
+                        style={{ backgroundColor: task.projectColor }}
+                      />
                       <SelectValue />
                     </span>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="unassigned">Unassigned</SelectItem>
-                    {members.map((member) => (
-                      <SelectItem key={member.userId} value={member.userId}>
-                        {member.name}
-                      </SelectItem>
-                    ))}
+                    {projects
+                      .filter(
+                        (project) =>
+                          !project.archived || project.id === task.projectId,
+                      )
+                      .map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </PropertyRow>
@@ -698,7 +735,7 @@ export function TaskDetailView({
                   value={task.priority}
                   onValueChange={(value) => setPriority(value as TaskPriority)}
                 >
-                  <SelectTrigger className="h-8 w-full border-transparent bg-transparent px-1.5 text-[11.5px] shadow-none hover:bg-accent focus-visible:ring-0">
+                  <SelectTrigger className="h-8 w-full border-transparent bg-transparent px-1.5 text-[0.7188rem] shadow-none hover:bg-accent focus-visible:ring-0">
                     <span className="flex items-center gap-1.5">
                       <span
                         className="size-1.5 rounded-full"
@@ -725,7 +762,7 @@ export function TaskDetailView({
                     type="date"
                     value={task.dueDate ?? ""}
                     onChange={(event) => setDueDate(event.target.value)}
-                    className="h-8 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-1.5 text-[11px] outline-none hover:bg-accent focus:border-border focus:bg-card"
+                    className="h-8 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-1.5 text-[0.6875rem] outline-none hover:bg-accent focus:border-border focus:bg-card"
                     aria-label="Due date"
                   />
                   {task.dueDate && (
@@ -746,7 +783,7 @@ export function TaskDetailView({
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
-                      className="flex min-h-8 w-full flex-wrap items-center gap-1 rounded-md border border-transparent bg-transparent px-1.5 py-1 text-[11px] transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
+                      className="flex min-h-8 w-full flex-wrap items-center gap-1 rounded-md border border-transparent bg-transparent px-1.5 py-1 text-[0.6875rem] transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
                     >
                       {task.labels.length === 0 ? (
                         <span className="text-muted-foreground/45">None</span>
@@ -754,7 +791,7 @@ export function TaskDetailView({
                         task.labels.map((label) => (
                           <span
                             key={label.id}
-                            className="flex items-center gap-1 rounded border border-border/70 bg-muted/30 px-1.5 py-0.5 text-[9px]"
+                            className="flex items-center gap-1 rounded border border-border/70 bg-muted/30 px-1.5 py-0.5 text-[0.5625rem]"
                           >
                             <span
                               className="size-1 rounded-full"
@@ -767,7 +804,7 @@ export function TaskDetailView({
                       <ChevronDown className="ml-auto size-3 shrink-0 text-muted-foreground/40" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[210px]">
+                  <DropdownMenuContent align="end" className="w-[13.125rem]">
                     <DropdownMenuLabel>Labels</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {labels.length === 0 ? (
@@ -798,27 +835,14 @@ export function TaskDetailView({
 
             <div className="my-3 h-px bg-border/60" />
 
-            <div className="space-y-2 px-0.5 text-[10px] text-muted-foreground">
-              <Link
-                href={`/w/${workspaceSlug}/projects/${task.projectKey}`}
-                className="flex items-center justify-between transition-colors hover:text-foreground"
-              >
-                <span>Project</span>
-                <span className="flex items-center gap-1.5 font-medium text-foreground/80">
-                  <span
-                    className="size-1.5 rounded-[2px]"
-                    style={{ backgroundColor: task.projectColor }}
-                  />
-                  {task.projectKey}
-                </span>
-              </Link>
+            <div className="space-y-2 px-0.5 text-[0.625rem] text-muted-foreground">
               <div className="flex items-center justify-between gap-2">
                 <span>Created by</span>
                 <span className="flex items-center gap-1.5 font-medium text-foreground/75">
                   <UserAvatar
                     name={task.createdByName}
                     image={task.createdByImage}
-                    className="size-4 border-0 [&_[data-slot=avatar-fallback]]:text-[6px]"
+                    className="size-4 border-0 [&_[data-slot=avatar-fallback]]:text-[0.375rem]"
                   />
                   {task.createdByName}
                 </span>
@@ -845,7 +869,7 @@ export function TaskDetailView({
       </div>
 
       <Dialog open={linkOpen} onOpenChange={setLinkOpen}>
-        <DialogContent className="sm:max-w-[460px]">
+        <DialogContent className="sm:max-w-[28.75rem]">
           <DialogHeader>
             <DialogTitle>Link a related task</DialogTitle>
             <DialogDescription>
@@ -862,14 +886,14 @@ export function TaskDetailView({
               className="pl-8"
             />
           </div>
-          <div className="max-h-[280px] overflow-y-auto">
+          <div className="max-h-[17.5rem] overflow-y-auto">
             {searchingLinks ? (
-              <div className="flex items-center justify-center py-8 text-[11px] text-muted-foreground">
+              <div className="flex items-center justify-center py-8 text-[0.6875rem] text-muted-foreground">
                 <Loader2 className="mr-2 size-3.5 animate-spin" />
                 Searching…
               </div>
             ) : linkResults.length === 0 ? (
-              <p className="py-8 text-center text-[11px] text-muted-foreground/60">
+              <p className="py-8 text-center text-[0.6875rem] text-muted-foreground/60">
                 {linkQuery.trim()
                   ? "No matching tasks."
                   : "Start typing to find a task."}
@@ -882,13 +906,13 @@ export function TaskDetailView({
                     type="button"
                     onClick={() => addLink(result)}
                     disabled={Boolean(linkingId)}
-                    className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-[11.5px] transition-colors hover:bg-accent disabled:opacity-50"
+                    className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-[0.7188rem] transition-colors hover:bg-accent disabled:opacity-50"
                   >
                     <span
                       className="size-1.5 shrink-0 rounded-full"
                       style={{ backgroundColor: result.color ?? "#94a3b8" }}
                     />
-                    <span className="font-mono text-[9px] text-muted-foreground/60">
+                    <span className="font-mono text-[0.5625rem] text-muted-foreground/60">
                       {result.subtitle}
                     </span>
                     <span className="min-w-0 flex-1 truncate">
@@ -934,8 +958,8 @@ function PropertyRow({
   return (
     <div className="flex items-center gap-1.5">
       <Icon className="size-3 shrink-0 text-muted-foreground/45" />
-      <div className="grid min-w-0 flex-1 grid-cols-[78px_1fr] items-center gap-1">
-        <span className="text-[10px] text-muted-foreground">{label}</span>
+      <div className="grid min-w-0 flex-1 grid-cols-[4.875rem_1fr] items-center gap-1">
+        <span className="text-[0.625rem] text-muted-foreground">{label}</span>
         {children}
       </div>
     </div>

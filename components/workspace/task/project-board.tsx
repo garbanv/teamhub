@@ -14,7 +14,7 @@ import {
 import { format, isBefore, isToday, isTomorrow, parseISO, startOfDay } from "date-fns";
 import { toast } from "sonner";
 
-import { UserAvatar } from "@/components/user-avatar";
+import { AssigneeStack } from "@/components/workspace/task/assignee-stack";
 import { TaskPriorityIcon } from "@/components/workspace/task/task-priority-icon";
 import {
   DropdownMenu,
@@ -127,7 +127,7 @@ export function ProjectBoard({
               if (taskId) void moveTask(taskId, status);
             }}
             className={cn(
-              "flex w-[284px] shrink-0 flex-col rounded-xl border border-border/70 bg-muted/20 transition-colors",
+              "flex w-[17.75rem] shrink-0 flex-col rounded-xl border border-border/70 bg-muted/20 transition-colors",
               overStatus === status.id &&
                 "border-primary/40 bg-primary/[0.04] ring-2 ring-primary/10",
             )}
@@ -137,8 +137,8 @@ export function ProjectBoard({
                 className="size-2 rounded-full"
                 style={{ backgroundColor: status.color }}
               />
-              <span className="text-[11px] font-semibold">{status.name}</span>
-              <span className="text-[9.5px] tabular-nums text-muted-foreground/50">
+              <span className="text-[0.6875rem] font-semibold">{status.name}</span>
+              <span className="text-[0.5938rem] tabular-nums text-muted-foreground/50">
                 {columnTasks.length}
               </span>
             </header>
@@ -166,7 +166,7 @@ export function ProjectBoard({
               ))}
 
               {columnTasks.length === 0 && (
-                <div className="flex min-h-[110px] flex-1 items-center justify-center rounded-lg border border-dashed border-border/60 px-3 text-center text-[10px] text-muted-foreground/45">
+                <div className="flex min-h-[110px] flex-1 items-center justify-center rounded-lg border border-dashed border-border/60 px-3 text-center text-[0.625rem] text-muted-foreground/45">
                   {draggingId ? "Drop here" : "No tasks"}
                 </div>
               )}
@@ -211,7 +211,7 @@ function BoardCard({
       <div className="flex items-center gap-1.5">
         <GripVertical className="size-3 text-muted-foreground/15 opacity-0 transition-opacity group-hover:opacity-100" />
         <TaskPriorityIcon priority={task.priority} />
-        <span className="font-mono text-[9px] tracking-wide text-muted-foreground/55">
+        <span className="font-mono text-[0.5625rem] tracking-wide text-muted-foreground/55">
           {task.identifier}
         </span>
         {moving && (
@@ -228,7 +228,7 @@ function BoardCard({
               <MoreHorizontal className="size-3" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-[190px]">
+          <DropdownMenuContent align="start" className="w-[11.875rem]">
             <DropdownMenuLabel>Move to status</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {statuses.map((status) => (
@@ -254,7 +254,7 @@ function BoardCard({
 
       <Link
         href={`/w/${workspaceSlug}/tasks/${task.id}`}
-        className="mt-1.5 block text-[12px] leading-4.5 font-medium text-foreground/90 hover:underline hover:decoration-border hover:underline-offset-4"
+        className="mt-1.5 block text-[0.75rem] leading-4.5 font-medium text-foreground/90 hover:underline hover:decoration-border hover:underline-offset-4"
       >
         {task.title}
       </Link>
@@ -264,7 +264,7 @@ function BoardCard({
           {task.labels.slice(0, 2).map((label) => (
             <span
               key={label.id}
-              className="flex items-center gap-1 rounded border border-border/70 bg-muted/25 px-1.5 py-0.5 text-[9px] text-muted-foreground"
+              className="flex items-center gap-1 rounded border border-border/70 bg-muted/25 px-1.5 py-0.5 text-[0.5625rem] text-muted-foreground"
             >
               <span
                 className="size-1 rounded-full"
@@ -274,7 +274,7 @@ function BoardCard({
             </span>
           ))}
           {task.labels.length > 2 && (
-            <span className="text-[9px] text-muted-foreground/45">
+            <span className="text-[0.5625rem] text-muted-foreground/45">
               +{task.labels.length - 2}
             </span>
           )}
@@ -285,7 +285,7 @@ function BoardCard({
         {task.dueDate ? (
           <span
             className={cn(
-              "flex items-center gap-1 text-[9.5px] text-muted-foreground/60",
+              "flex items-center gap-1 text-[0.5938rem] text-muted-foreground/60",
               task.statusCategory !== "done" &&
                 task.statusCategory !== "canceled" &&
                 isBefore(
@@ -303,26 +303,22 @@ function BoardCard({
                 : format(parseISO(task.dueDate), "MMM d")}
           </span>
         ) : (
-          <span className="text-[9.5px] text-muted-foreground/30">No date</span>
+          <span className="text-[0.5938rem] text-muted-foreground/30">No date</span>
         )}
 
         {task.subtaskCount > 0 && (
-          <span className="flex items-center gap-0.5 text-[9.5px] text-muted-foreground/50">
+          <span className="flex items-center gap-0.5 text-[0.5938rem] text-muted-foreground/50">
             <ListTree className="size-2.5" />
             {task.subtaskCount}
           </span>
         )}
 
         <span className="ml-auto">
-          {task.assigneeName ? (
-            <UserAvatar
-              name={task.assigneeName}
-              image={task.assigneeImage}
-              className="size-4.5 border-0 [&_[data-slot=avatar-fallback]]:text-[6px]"
-            />
-          ) : (
-            <span className="block size-4.5 rounded-full border border-dashed border-border/70" />
-          )}
+          <AssigneeStack
+            assignees={task.assignees}
+            max={3}
+            avatarClassName="size-4.5 border-0 [&_[data-slot=avatar-fallback]]:text-[0.375rem]"
+          />
         </span>
       </div>
     </article>

@@ -70,12 +70,18 @@ export function describeActivity(row: {
       return "changed the status";
     }
     case "assignee_changed": {
-      const from = typeof meta.fromName === "string" ? meta.fromName : null;
+      const added = Array.isArray(meta.addedNames) ? (meta.addedNames as string[]) : [];
+      const removed = Array.isArray(meta.removedNames) ? (meta.removedNames as string[]) : [];
+      const parts: string[] = [];
+      if (added.length) parts.push(`assigned ${added.join(", ")}`);
+      if (removed.length) parts.push(`unassigned ${removed.join(", ")}`);
+      return parts.length ? parts.join(" and ") : "changed the assignees";
+    }
+    case "project_changed": {
       const to = typeof meta.toName === "string" ? meta.toName : null;
-      if (to && from) return `reassigned from ${from} to ${to}`;
-      if (to) return `assigned this task to ${to}`;
-      if (from) return "unassigned this task";
-      return "changed the assignee";
+      const from = typeof meta.fromName === "string" ? meta.fromName : null;
+      if (to && from) return `moved this task from ${from} to ${to}`;
+      return "moved this task to another project";
     }
     case "priority_changed": {
       const to = typeof meta.toLabel === "string" ? meta.toLabel : null;

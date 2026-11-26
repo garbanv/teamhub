@@ -583,7 +583,7 @@ async function seed() {
         title: item.title,
         description: docFromText(item.description),
         statusId: statusIds.get(item.status) ?? null,
-        assigneeId: memberIds.get(item.assignee) ?? null,
+        assigneeIds: memberIds.get(item.assignee) ? [memberIds.get(item.assignee)!] : [],
         priority: item.priority,
         dueDate: dateFromOffset(item.due),
         labelIds: labels.get(item.label) ? [labels.get(item.label)!] : [],
@@ -602,7 +602,7 @@ async function seed() {
           parentTaskId: parentId,
           title: "Desktop navigation exploration",
           statusId: statusIds.get("Done") ?? null,
-          assigneeId: memberIds.get("maya@hub.so") ?? null,
+          assigneeIds: memberIds.get("maya@hub.so") ? [memberIds.get("maya@hub.so")!] : [],
           priority: "medium",
           dueDate: dateFromOffset(1),
           labelIds: labels.get("Design") ? [labels.get("Design")!] : [],
@@ -614,7 +614,7 @@ async function seed() {
           parentTaskId: parentId,
           title: "Mobile navigation states",
           statusId: statusIds.get("Todo") ?? null,
-          assigneeId: memberIds.get("maya@hub.so") ?? null,
+          assigneeIds: memberIds.get("maya@hub.so") ? [memberIds.get("maya@hub.so")!] : [],
           priority: "medium",
           dueDate: dateFromOffset(2),
           labelIds: labels.get("Design") ? [labels.get("Design")!] : [],
@@ -646,10 +646,11 @@ async function seed() {
   await query(
     `
       insert into task_followers (task_id, user_id)
-      select t.id, t.assignee_id
-      from tasks t
+      select ta.task_id, ta.user_id
+      from task_assignees ta
+      join tasks t on t.id = ta.task_id
       join projects p on p.id = t.project_id
-      where p.workspace_id = $1 and t.assignee_id is not null
+      where p.workspace_id = $1
       on conflict do nothing
     `,
     [workspace.id],

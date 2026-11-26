@@ -10,7 +10,7 @@ import {
   getWorkspaceLabels,
   isTaskFollowed,
 } from "@/lib/tasks";
-import { getWorkspaceMembers } from "@/lib/workspaces";
+import { getProjectNavItems, getWorkspaceMembers } from "@/lib/workspaces";
 import { requireWorkspacePage } from "@/lib/workspace-page";
 
 export const metadata: Metadata = { title: "Task" };
@@ -25,10 +25,11 @@ export default async function TaskPage({
   const task = await getTaskById(workspace.id, taskId);
   if (!task) notFound();
 
-  const [statuses, members, labels, comments, activities, following] =
+  const [statuses, members, projects, labels, comments, activities, following] =
     await Promise.all([
       getProjectStatuses(task.projectId),
       getWorkspaceMembers(workspace.id),
+      getProjectNavItems(workspace.id),
       getWorkspaceLabels(workspace.id),
       getTaskComments(task.id),
       getTaskActivity(task.id),
@@ -41,6 +42,7 @@ export default async function TaskPage({
       workspaceId={workspace.id}
       workspaceSlug={workspace.slug}
       members={members}
+      projects={projects}
       statuses={statuses}
       labels={labels}
       currentUser={user}

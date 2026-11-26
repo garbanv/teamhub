@@ -122,6 +122,12 @@ export type TaskLabel = {
   color: string;
 };
 
+export type TaskAssignee = {
+  id: string;
+  name: string;
+  image: string | null;
+};
+
 export type TaskListItem = {
   id: string;
   projectId: string;
@@ -136,9 +142,7 @@ export type TaskListItem = {
   statusName: string;
   statusColor: string;
   statusCategory: ProjectStatusCategory;
-  assigneeId: string | null;
-  assigneeName: string | null;
-  assigneeImage: string | null;
+  assignees: TaskAssignee[];
   priority: TaskPriority;
   dueDate: string | null;
   parentTaskId: string | null;

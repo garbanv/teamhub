@@ -280,14 +280,14 @@ export async function getWorkspaceOverviewCounts(
           join projects p on p.id = t.project_id
           join project_statuses s on s.id = t.status_id
           where p.workspace_id = $1
-            and t.assignee_id = $2
+            and exists (select 1 from task_assignees ta where ta.task_id = t.id and ta.user_id = $2)
             and s.category not in ('done', 'canceled')) as assigned,
         (select count(*)::int
           from tasks t
           join projects p on p.id = t.project_id
           join project_statuses s on s.id = t.status_id
           where p.workspace_id = $1
-            and t.assignee_id = $2
+            and exists (select 1 from task_assignees ta where ta.task_id = t.id and ta.user_id = $2)
             and s.category not in ('done', 'canceled')
             and t.due_date between current_date and current_date + 7) as "thisWeek",
         (select count(*)::int
@@ -295,7 +295,7 @@ export async function getWorkspaceOverviewCounts(
           join projects p on p.id = t.project_id
           join project_statuses s on s.id = t.status_id
           where p.workspace_id = $1
-            and t.assignee_id = $2
+            and exists (select 1 from task_assignees ta where ta.task_id = t.id and ta.user_id = $2)
             and s.category not in ('done', 'canceled')
             and t.due_date < current_date) as overdue
     `,

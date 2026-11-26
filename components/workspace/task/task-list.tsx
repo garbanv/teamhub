@@ -11,7 +11,7 @@ import {
 
 import { NewTaskButton } from "@/components/workspace/task/quick-create-task";
 import { TaskPriorityIcon } from "@/components/workspace/task/task-priority-icon";
-import { UserAvatar } from "@/components/user-avatar";
+import { AssigneeStack } from "@/components/workspace/task/assignee-stack";
 import { Card, EmptyState } from "@/components/workspace/page";
 import type { ProjectStatusItem, TaskListItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -34,7 +34,7 @@ function DueDate({ task }: { task: TaskListItem }) {
   return (
     <span
       className={cn(
-        "hidden min-w-[48px] items-center justify-end gap-1 text-[10px] whitespace-nowrap sm:flex",
+        "hidden min-w-[3rem] items-center justify-end gap-1 text-[0.625rem] whitespace-nowrap sm:flex",
         overdue
           ? "font-medium text-destructive"
           : today
@@ -54,7 +54,7 @@ function LabelChips({ task }: { task: TaskListItem }) {
       {task.labels.slice(0, 2).map((label) => (
         <span
           key={label.id}
-          className="flex items-center gap-1 rounded border border-border/70 bg-muted/25 px-1.5 py-0.5 text-[9px] text-muted-foreground"
+          className="flex items-center gap-1 rounded border border-border/70 bg-muted/25 px-1.5 py-0.5 text-[0.5625rem] text-muted-foreground"
         >
           <span
             className="size-1 rounded-full"
@@ -64,7 +64,7 @@ function LabelChips({ task }: { task: TaskListItem }) {
         </span>
       ))}
       {task.labels.length > 2 && (
-        <span className="text-[9px] text-muted-foreground/50">
+        <span className="text-[0.5625rem] text-muted-foreground/50">
           +{task.labels.length - 2}
         </span>
       )}
@@ -76,10 +76,12 @@ export function TaskRow({
   task,
   workspaceSlug,
   showStatus = false,
+  showProject = false,
 }: {
   task: TaskListItem;
   workspaceSlug: string;
   showStatus?: boolean;
+  showProject?: boolean;
 }) {
   return (
     <Link
@@ -87,24 +89,37 @@ export function TaskRow({
       className="group flex h-10 items-center gap-2.5 px-3 transition-colors hover:bg-muted/35"
     >
       <TaskPriorityIcon priority={task.priority} />
-      <span className="hidden w-[58px] shrink-0 font-mono text-[9.5px] tracking-wide text-muted-foreground/55 sm:inline">
+      <span className="hidden w-[3.625rem] shrink-0 font-mono text-[0.5938rem] tracking-wide text-muted-foreground/55 sm:inline">
         {task.identifier}
       </span>
-      <span className="min-w-0 flex-1 truncate text-[12.5px] text-foreground/90 group-hover:text-foreground">
+      <span className="min-w-0 flex-1 truncate text-[0.7812rem] text-foreground/90 group-hover:text-foreground">
         {task.title}
       </span>
 
       <LabelChips task={task} />
 
       {task.subtaskCount > 0 && (
-        <span className="hidden items-center gap-0.5 text-[9.5px] text-muted-foreground/50 sm:flex">
+        <span className="hidden items-center gap-0.5 text-[0.5938rem] text-muted-foreground/50 sm:flex">
           <ListTree className="size-3" />
           {task.subtaskCount}
         </span>
       )}
 
+      {showProject && (
+        <span
+          className="hidden max-w-[9.375rem] items-center gap-1.5 rounded border border-border/70 bg-muted/25 px-1.5 py-0.5 text-[0.5938rem] text-foreground/75 sm:flex"
+          title={task.projectName}
+        >
+          <span
+            className="size-1.5 shrink-0 rounded-[2px]"
+            style={{ backgroundColor: task.projectColor }}
+          />
+          <span className="truncate">{task.projectName}</span>
+        </span>
+      )}
+
       {showStatus && (
-        <span className="hidden items-center gap-1.5 rounded border border-border/70 bg-card px-1.5 py-0.5 text-[9.5px] text-muted-foreground md:flex">
+        <span className="hidden items-center gap-1.5 rounded border border-border/70 bg-card px-1.5 py-0.5 text-[0.5938rem] text-muted-foreground md:flex">
           <span
             className="size-1.5 rounded-full"
             style={{ backgroundColor: task.statusColor }}
@@ -115,15 +130,11 @@ export function TaskRow({
 
       <DueDate task={task} />
 
-      {task.assigneeName ? (
-        <UserAvatar
-          name={task.assigneeName}
-          image={task.assigneeImage}
-          className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[7px]"
-        />
-      ) : (
-        <span className="size-5 rounded-full border border-dashed border-border/80" />
-      )}
+      <AssigneeStack
+        assignees={task.assignees}
+        max={3}
+        avatarClassName="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[0.4375rem]"
+      />
     </Link>
   );
 }
@@ -183,10 +194,10 @@ export function ProjectTaskList({
               className="size-2 rounded-full"
               style={{ backgroundColor: group.status.color }}
             />
-            <span className="text-[10.5px] font-semibold tracking-[0.02em]">
+            <span className="text-[0.6562rem] font-semibold tracking-[0.02em]">
               {group.status.name}
             </span>
-            <span className="text-[9.5px] tabular-nums text-muted-foreground/50">
+            <span className="text-[0.5938rem] tabular-nums text-muted-foreground/50">
               {group.tasks.length}
             </span>
           </div>
@@ -234,6 +245,7 @@ export function PersonalTaskList({
             task={task}
             workspaceSlug={workspaceSlug}
             showStatus
+            showProject
           />
         ))}
       </div>

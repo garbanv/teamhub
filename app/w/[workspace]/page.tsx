@@ -142,11 +142,11 @@ export default async function HomePage({
               </span>
               <ArrowUpRight className="size-3 -translate-y-0.5 text-muted-foreground/25 transition-colors group-hover:text-muted-foreground/60" />
             </div>
-            <p className="mt-3.5 text-[23px] leading-none font-semibold tracking-[-0.04em] tabular-nums">
+            <p className="mt-3.5 text-[1.4375rem] leading-none font-semibold tracking-[-0.04em] tabular-nums">
               {stat.value}
             </p>
-            <p className="mt-1.5 text-[11.5px] font-medium">{stat.label}</p>
-            <p className="mt-0.5 text-[10px] text-muted-foreground/65">
+            <p className="mt-1.5 text-[0.7188rem] font-medium">{stat.label}</p>
+            <p className="mt-0.5 text-[0.625rem] text-muted-foreground/65">
               {stat.hint}
             </p>
           </Link>
@@ -160,7 +160,7 @@ export default async function HomePage({
               title="Get your workspace moving"
               description="A few small steps and this place starts to feel like yours."
               actions={
-                <span className="rounded-full border border-border bg-muted/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                <span className="rounded-full border border-border bg-muted/40 px-2 py-0.5 text-[0.625rem] font-medium text-muted-foreground">
                   {completedSteps} of 3
                 </span>
               }
@@ -225,7 +225,7 @@ export default async function HomePage({
               actions={
                 <Link
                   href={`${base}/my-tasks`}
-                  className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1 text-[0.625rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   All tasks
                   <ArrowRight className="size-3" />
@@ -240,6 +240,7 @@ export default async function HomePage({
                     task={task}
                     workspaceSlug={workspace.slug}
                     showStatus
+                    showProject
                   />
                 ))}
               </div>
@@ -283,19 +284,19 @@ export default async function HomePage({
                     className="size-7 border-0"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[12px] font-medium">
+                    <p className="truncate text-[0.75rem] font-medium">
                       {member.name}
                       {member.userId === user.id && (
-                        <span className="ml-1 text-[10px] font-normal text-muted-foreground">
+                        <span className="ml-1 text-[0.625rem] font-normal text-muted-foreground">
                           (you)
                         </span>
                       )}
                     </p>
-                    <p className="truncate text-[10px] text-muted-foreground">
+                    <p className="truncate text-[0.625rem] text-muted-foreground">
                       {member.email}
                     </p>
                   </div>
-                  <span className="text-[9.5px] font-medium tracking-wide text-muted-foreground/60 uppercase">
+                  <span className="text-[0.5938rem] font-medium tracking-wide text-muted-foreground/60 uppercase">
                     {roleLabel(member.role)}
                   </span>
                 </div>
@@ -305,7 +306,7 @@ export default async function HomePage({
               {canManage ? (
                 <Link
                   href={`${base}/settings#members`}
-                  className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1.5 text-[0.6875rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Users className="size-3" />
                   Manage members and invites
@@ -313,7 +314,7 @@ export default async function HomePage({
               ) : (
                 <Link
                   href={`${base}/settings#members`}
-                  className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1.5 text-[0.6875rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Users className="size-3" />
                   View team members
@@ -325,11 +326,11 @@ export default async function HomePage({
           <CommandTip />
 
           <div className="rounded-xl border border-dashed border-border px-4 py-3.5">
-            <p className="flex items-center gap-1.5 text-[10px] font-medium tracking-[0.12em] text-muted-foreground/55 uppercase">
+            <p className="flex items-center gap-1.5 text-[0.625rem] font-medium tracking-[0.12em] text-muted-foreground/55 uppercase">
               <Sparkles className="size-3 text-brand/80" />
               Building Hub
             </p>
-            <p className="mt-1.5 text-[11px] leading-4 text-muted-foreground">
+            <p className="mt-1.5 text-[0.6875rem] leading-4 text-muted-foreground">
               Docs and Chat are coming next. Your projects and tasks will live
               right beside them.
             </p>
@@ -367,8 +368,8 @@ function SetupStep({
         )}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[12.5px] font-medium">{title}</p>
-        <p className="mt-0.5 text-[11px] leading-4 text-muted-foreground">
+        <p className="text-[0.7812rem] font-medium">{title}</p>
+        <p className="mt-0.5 text-[0.6875rem] leading-4 text-muted-foreground">
           {description}
         </p>
       </div>

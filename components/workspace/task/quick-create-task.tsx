@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { AssigneePicker } from "@/components/workspace/task/assignee-picker";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -71,7 +73,7 @@ export function QuickCreateTaskProvider({
   const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [projectId, setProjectId] = React.useState(projects[0]?.id ?? "");
-  const [assigneeId, setAssigneeId] = React.useState("unassigned");
+  const [assigneeIds, setAssigneeIds] = React.useState<string[]>([]);
   const [priority, setPriority] = React.useState<TaskPriority>("none");
   const [dueDate, setDueDate] = React.useState("");
   const [saving, setSaving] = React.useState(false);
@@ -90,7 +92,7 @@ export function QuickCreateTaskProvider({
     }
     setTitle("");
     setProjectId(options?.projectId ?? currentProjectId ?? projects[0]!.id);
-    setAssigneeId("unassigned");
+    setAssigneeIds([]);
     setPriority("none");
     setDueDate("");
     setSaving(false);
@@ -144,7 +146,7 @@ export function QuickCreateTaskProvider({
         body: JSON.stringify({
           projectId,
           title: title.trim(),
-          assigneeId: assigneeId === "unassigned" ? null : assigneeId,
+          assigneeIds,
           priority,
           dueDate: dueDate || null,
         }),
@@ -173,12 +175,12 @@ export function QuickCreateTaskProvider({
       {children}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[530px]">
+        <DialogContent className="sm:max-w-[33.125rem]">
           <DialogHeader>
-            <div className="mb-1 flex items-center gap-2 text-[10px] font-medium tracking-[0.12em] text-muted-foreground/60 uppercase">
+            <div className="mb-1 flex items-center gap-2 text-[0.625rem] font-medium tracking-[0.12em] text-muted-foreground/60 uppercase">
               <Plus className="size-3" />
               Quick create
-              <span className="ml-auto rounded border border-border bg-muted/50 px-1.5 py-0.5 font-mono text-[9px] tracking-normal text-muted-foreground/60">
+              <span className="ml-auto rounded border border-border bg-muted/50 px-1.5 py-0.5 font-mono text-[0.5625rem] tracking-normal text-muted-foreground/60">
                 C
               </span>
             </div>
@@ -200,7 +202,7 @@ export function QuickCreateTaskProvider({
                 maxLength={500}
                 required
                 disabled={saving}
-                className="h-10 text-[13.5px]"
+                className="h-10 text-[0.8438rem]"
               />
             </div>
 
@@ -224,7 +226,7 @@ export function QuickCreateTaskProvider({
                             style={{ backgroundColor: project.color }}
                           />
                           <span className="truncate">{project.name}</span>
-                          <span className="font-mono text-[9px] text-muted-foreground">
+                          <span className="font-mono text-[0.5625rem] text-muted-foreground">
                             {project.key}
                           </span>
                         </span>
@@ -236,23 +238,13 @@ export function QuickCreateTaskProvider({
 
               <div className="space-y-1.5">
                 <Label>Assignee</Label>
-                <Select
-                  value={assigneeId}
-                  onValueChange={setAssigneeId}
+                <AssigneePicker
+                  members={members}
+                  value={assigneeIds}
+                  onChange={setAssigneeIds}
                   disabled={saving}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="unassigned">Unassigned</SelectItem>
-                    {members.map((member) => (
-                      <SelectItem key={member.userId} value={member.userId}>
-                        {member.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  className="h-9 border border-input px-3"
+                />
               </div>
             </div>
 
@@ -294,7 +286,7 @@ export function QuickCreateTaskProvider({
             </div>
 
             <div className="flex items-center justify-between gap-3 border-t border-border/70 pt-3">
-              <span className="hidden items-center gap-1.5 text-[10px] text-muted-foreground/55 sm:flex">
+              <span className="hidden items-center gap-1.5 text-[0.625rem] text-muted-foreground/55 sm:flex">
                 <CornerDownLeft className="size-2.5" />
                 Create task
               </span>
@@ -350,7 +342,7 @@ export function NewTaskButton({
       <Plus className="size-3.5" />
       New task
       {showShortcut && (
-        <kbd className="ml-1 rounded border border-current/20 px-1 py-0.5 text-[8.5px] font-medium opacity-50">
+        <kbd className="ml-1 rounded border border-current/20 px-1 py-0.5 text-[0.5312rem] font-medium opacity-50">
           C
         </kbd>
       )}
