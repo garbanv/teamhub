@@ -83,10 +83,10 @@ export default async function ProjectsPage({
         <section className="mt-8">
           <div className="mb-3 flex items-center gap-2">
             <Archive className="size-3.5 text-muted-foreground/60" />
-            <h2 className="text-[12px] font-semibold tracking-[-0.01em]">
+            <h2 className="text-[0.75rem] font-semibold tracking-[-0.01em]">
               Archived
             </h2>
-            <span className="text-[10px] text-muted-foreground/50">
+            <span className="text-[0.625rem] text-muted-foreground/50">
               {archived.length}
             </span>
           </div>

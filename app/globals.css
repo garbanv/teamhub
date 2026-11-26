@@ -130,6 +130,19 @@
   }
 
   html {
+    font-size: 100%;
+  }
+  html[data-text-size="large"] {
+    font-size: 112.5%;
+  }
+  html[data-text-size="larger"] {
+    font-size: 125%;
+  }
+  html[data-text-size="largest"] {
+    font-size: 150%;
+  }
+
+  html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -205,7 +218,7 @@
 .tiptap {
   min-height: 118px;
   padding: 0.75rem 0.85rem;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.65;
   color: var(--foreground);
   outline: none;
@@ -256,7 +269,7 @@
   background: var(--muted);
   padding: 0.6rem 0.75rem;
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 0.7188rem;
   overflow-x: auto;
 }
 
@@ -288,7 +301,7 @@
 .doc-tiptap {
   min-height: 480px;
   padding: 0.25rem 0 4rem;
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.75;
   color: var(--foreground);
   outline: none;
@@ -370,7 +383,7 @@
   padding: 0.9rem 1rem;
   overflow-x: auto;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.65;
 }
 
@@ -432,7 +445,7 @@
   border-collapse: collapse;
   width: 100%;
   table-layout: fixed;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .doc-tiptap th,
@@ -529,4 +542,28 @@
 .doc-tiptap .hljs-attribute,
 .doc-tiptap .hljs-variable {
   color: oklch(0.55 0.13 65);
+}
+
+/* Collapsible desktop sidebar. Unlayered so it beats the lg:block utility. */
+@media (min-width: 64rem) {
+  html[data-sidebar="collapsed"] .hub-sidebar {
+    display: none;
+  }
+  html[data-sidebar="collapsed"] .hub-sidebar-offset {
+    padding-left: 0;
+  }
+}
+
+/* Largest text: stack the task page, description first, properties below. */
+html[data-text-size="largest"] .hub-task-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+html[data-text-size="largest"] .hub-task-main {
+  order: 1;
+}
+html[data-text-size="largest"] .hub-task-aside {
+  order: 2;
+}
+html[data-text-size="largest"] .hub-task-props {
+  position: static;
 }

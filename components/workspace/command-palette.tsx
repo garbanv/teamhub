@@ -206,7 +206,7 @@ function CommandPalette({
         {trimmed ? (
           <>
             {loading && (
-              <div className="flex items-center gap-2 px-3 py-6 text-[12.5px] text-muted-foreground">
+              <div className="flex items-center gap-2 px-3 py-6 text-[0.7812rem] text-muted-foreground">
                 <Loader2 className="size-3.5 animate-spin" />
                 Searching {workspace.name}…
               </div>
@@ -217,8 +217,8 @@ function CommandPalette({
                 <span className="flex size-9 items-center justify-center rounded-full border border-border bg-muted/40">
                   <SearchX className="size-4 text-muted-foreground" />
                 </span>
-                <p className="text-[12.5px] font-medium">No matches yet</p>
-                <p className="max-w-[250px] text-[11.5px] leading-4 text-muted-foreground">
+                <p className="text-[0.7812rem] font-medium">No matches yet</p>
+                <p className="max-w-[15.625rem] text-[0.7188rem] leading-4 text-muted-foreground">
                   Try a project key like WEB, a task title, or a task number.
                 </p>
               </div>
@@ -233,7 +233,7 @@ function CommandPalette({
                     onSelect={() => go(result.href)}
                   >
                     <span
-                      className="flex size-5 items-center justify-center rounded-[5px] text-[9px] font-semibold text-white"
+                      className="flex size-5 items-center justify-center rounded-[5px] text-[0.5625rem] font-semibold text-white"
                       style={{ backgroundColor: result.color ?? "#6366f1" }}
                     >
                       {result.subtitle?.slice(0, 1)}
@@ -241,7 +241,7 @@ function CommandPalette({
                     <span className="min-w-0 flex-1 truncate">
                       {result.title}
                     </span>
-                    <span className="font-mono text-[10px] text-muted-foreground">
+                    <span className="font-mono text-[0.625rem] text-muted-foreground">
                       {result.subtitle}
                     </span>
                   </CommandItem>
@@ -264,10 +264,10 @@ function CommandPalette({
                     <span className="min-w-0 flex-1 truncate">
                       {result.title}
                     </span>
-                    <span className="font-mono text-[10px] text-muted-foreground">
+                    <span className="font-mono text-[0.625rem] text-muted-foreground">
                       {result.subtitle}
                     </span>
-                    <span className="hidden text-[10px] text-muted-foreground sm:inline">
+                    <span className="hidden text-[0.625rem] text-muted-foreground sm:inline">
                       {result.meta}
                     </span>
                   </CommandItem>
@@ -315,7 +315,7 @@ function CommandPalette({
                       go(`/w/${workspace.slug}/docs/${page.id}`)
                     }
                   >
-                    <span className="flex size-4 items-center justify-center text-[11px]">
+                    <span className="flex size-4 items-center justify-center text-[0.6875rem]">
                       {page.icon || <FileText className="size-3.5" />}
                     </span>
                     <span className="min-w-0 flex-1 truncate">
@@ -344,7 +344,7 @@ function CommandPalette({
                     <span className="min-w-0 flex-1 truncate">
                       {project.name}
                     </span>
-                    <span className="font-mono text-[10px] text-muted-foreground">
+                    <span className="font-mono text-[0.625rem] text-muted-foreground">
                       {project.key}
                     </span>
                   </CommandItem>
@@ -389,7 +389,7 @@ function CommandPalette({
                     <WorkspaceGlyph
                       name={item.name}
                       color={item.logoColor}
-                      className="size-5 rounded-[5px] text-[8px]"
+                      className="size-5 rounded-[5px] text-[0.5rem]"
                     />
                     Switch to {item.name}
                     <ArrowUpRight className="ml-auto text-muted-foreground" />
@@ -433,12 +433,12 @@ function CommandPalette({
       </CommandList>
 
       <div className="flex items-center justify-between border-t border-border/80 bg-muted/20 px-3 py-2">
-        <div className="flex items-center gap-3 text-[10px] text-muted-foreground/70">
+        <div className="flex items-center gap-3 text-[0.625rem] text-muted-foreground/70">
           <span className="flex items-center gap-1">
-            <kbd className="rounded border border-border bg-card px-1 py-0.5 font-sans text-[9px]">
+            <kbd className="rounded border border-border bg-card px-1 py-0.5 font-sans text-[0.5625rem]">
               ↑
             </kbd>
-            <kbd className="rounded border border-border bg-card px-1 py-0.5 font-sans text-[9px]">
+            <kbd className="rounded border border-border bg-card px-1 py-0.5 font-sans text-[0.5625rem]">
               ↓
             </kbd>
             navigate
@@ -448,7 +448,7 @@ function CommandPalette({
             open
           </span>
         </div>
-        <span className="font-mono text-[9.5px] text-muted-foreground/50">
+        <span className="font-mono text-[0.5938rem] text-muted-foreground/50">
           {workspace.name}
         </span>
       </div>

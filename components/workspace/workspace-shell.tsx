@@ -52,6 +52,30 @@ export function WorkspaceShell({
     setMobileOpen(false);
   }, [pathname]);
 
+  const toggleSidebar = React.useCallback(() => {
+    const root = document.documentElement;
+    const collapsed = root.getAttribute("data-sidebar") === "collapsed";
+    if (collapsed) root.removeAttribute("data-sidebar");
+    else root.setAttribute("data-sidebar", "collapsed");
+    try {
+      if (collapsed) localStorage.removeItem("hub-sidebar");
+      else localStorage.setItem("hub-sidebar", "collapsed");
+    } catch {
+      // Storage can be blocked; the sidebar still toggles for this visit.
+    }
+  }, []);
+
+  React.useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key === "\\") {
+        event.preventDefault();
+        toggleSidebar();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [toggleSidebar]);
+
   return (
     <CommandMenuProvider
       workspace={workspace}
@@ -66,7 +90,7 @@ export function WorkspaceShell({
         members={members}
       >
       <div className="min-h-screen bg-background">
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[252px] border-r border-sidebar-border bg-sidebar lg:block">
+        <aside className="hub-sidebar fixed inset-y-0 left-0 z-40 hidden w-[15.75rem] border-r border-sidebar-border bg-sidebar lg:block">
           <SidebarContent
             workspace={workspace}
             workspaces={workspaces}
@@ -76,7 +100,7 @@ export function WorkspaceShell({
           />
         </aside>
 
-        <div className="lg:pl-[252px]">
+        <div className="hub-sidebar-offset lg:pl-[15.75rem]">
           <Topbar
             workspace={workspace}
             projects={projects}
@@ -84,6 +108,7 @@ export function WorkspaceShell({
             notifications={notifications}
             unreadCount={unreadCount}
             onOpenMobileNav={() => setMobileOpen(true)}
+            onToggleSidebar={toggleSidebar}
           />
           <main className="min-h-[calc(100vh-52px)]">{children}</main>
         </div>
@@ -91,7 +116,7 @@ export function WorkspaceShell({
         <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
           <DialogContent
             showCloseButton={false}
-            className="fixed inset-y-0 left-0 top-0 !flex h-full w-[282px] max-w-[86vw] !translate-x-0 !translate-y-0 flex-col gap-0 rounded-none border-y-0 border-l-0 border-r-border p-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
+            className="fixed inset-y-0 left-0 top-0 !flex h-full w-[17.625rem] max-w-[86vw] !translate-x-0 !translate-y-0 flex-col gap-0 rounded-none border-y-0 border-l-0 border-r-border p-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
           >
             <DialogTitle className="sr-only">Workspace navigation</DialogTitle>
             <div className="flex h-12 shrink-0 items-center justify-between border-b border-sidebar-border px-4">

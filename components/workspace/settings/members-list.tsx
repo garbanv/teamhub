@@ -111,19 +111,19 @@ export function MembersList({
               className="size-8 border-0"
             />
             <div className="min-w-0 flex-1">
-              <p className="flex items-center gap-1.5 truncate text-[12.5px] font-medium">
+              <p className="flex items-center gap-1.5 truncate text-[0.7812rem] font-medium">
                 {member.name}
                 {member.userId === currentUserId && (
-                  <span className="text-[10px] font-normal text-muted-foreground">
+                  <span className="text-[0.625rem] font-normal text-muted-foreground">
                     (you)
                   </span>
                 )}
               </p>
-              <p className="truncate text-[10.5px] text-muted-foreground">
+              <p className="truncate text-[0.6562rem] text-muted-foreground">
                 {member.email}
               </p>
             </div>
-            <span className="hidden text-[10px] text-muted-foreground/55 sm:inline">
+            <span className="hidden text-[0.625rem] text-muted-foreground/55 sm:inline">
               Joined {formatDate(member.joinedAt, { year: "numeric" })}
             </span>
 
@@ -138,7 +138,7 @@ export function MembersList({
                 >
                   <SelectTrigger
                     size="sm"
-                    className="h-7 w-[98px] text-[11px]"
+                    className="h-7 w-[6.125rem] text-[0.6875rem]"
                     aria-label={`Role for ${member.name}`}
                   >
                     {pendingId === member.membershipId ? (
@@ -194,7 +194,7 @@ export function MembersList({
           if (!open && !removing) setRemoveTarget(null);
         }}
       >
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[25rem]">
           <DialogHeader>
             <DialogTitle>Remove {removeTarget?.name}?</DialogTitle>
             <DialogDescription>

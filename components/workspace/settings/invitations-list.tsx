@@ -46,8 +46,8 @@ export function InvitationsList({
         <span className="flex size-9 items-center justify-center rounded-full border border-border bg-muted/35 text-muted-foreground">
           <Mail className="size-4" />
         </span>
-        <p className="mt-2.5 text-[12px] font-medium">No pending invitations</p>
-        <p className="mt-0.5 text-[10.5px] text-muted-foreground">
+        <p className="mt-2.5 text-[0.75rem] font-medium">No pending invitations</p>
+        <p className="mt-0.5 text-[0.6562rem] text-muted-foreground">
           Invite someone above and their link will show up here.
         </p>
       </div>
@@ -65,8 +65,8 @@ export function InvitationsList({
             <Mail className="size-3.5" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[12px] font-medium">{invitation.email}</p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="truncate text-[0.75rem] font-medium">{invitation.email}</p>
+            <p className="text-[0.625rem] text-muted-foreground">
               Invited by {invitation.invitedByName} ·{" "}
               {invitation.expired ? (
                 <span className="text-warning">Expired</span>

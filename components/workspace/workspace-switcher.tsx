@@ -36,10 +36,10 @@ export function WorkspaceSwitcher({
         >
           <WorkspaceGlyph name={workspace.name} color={workspace.logoColor} />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13px] leading-4 font-semibold tracking-[-0.01em]">
+            <span className="block truncate text-[0.8125rem] leading-4 font-semibold tracking-[-0.01em]">
               {workspace.name}
             </span>
-            <span className="block truncate text-[10.5px] leading-3.5 font-normal text-muted-foreground">
+            <span className="block truncate text-[0.6562rem] leading-3.5 font-normal text-muted-foreground">
               {workspace.memberCount} member
               {workspace.memberCount === 1 ? "" : "s"}
             </span>
@@ -48,7 +48,7 @@ export function WorkspaceSwitcher({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" sideOffset={6} className="w-[244px]">
+      <DropdownMenuContent align="start" sideOffset={6} className="w-[15.25rem]">
         <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
         {workspaces.map((item) => (
           <DropdownMenuItem
@@ -61,13 +61,13 @@ export function WorkspaceSwitcher({
             <WorkspaceGlyph
               name={item.name}
               color={item.logoColor}
-              className="size-6 rounded-md text-[10px]"
+              className="size-6 rounded-md text-[0.625rem]"
             />
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[12.5px] font-medium">
+              <span className="block truncate text-[0.7812rem] font-medium">
                 {item.name}
               </span>
-              <span className="block truncate text-[10px] text-muted-foreground">
+              <span className="block truncate text-[0.625rem] text-muted-foreground">
                 {item.memberCount} member{item.memberCount === 1 ? "" : "s"}
               </span>
             </span>
@@ -83,7 +83,7 @@ export function WorkspaceSwitcher({
             <span className="flex size-6 items-center justify-center rounded-md border border-dashed border-border">
               <Plus className="size-3.5" />
             </span>
-            <span className="text-[12.5px]">Create workspace</span>
+            <span className="text-[0.7812rem]">Create workspace</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -91,7 +91,7 @@ export function WorkspaceSwitcher({
             <span className="flex size-6 items-center justify-center rounded-md border border-border/70 bg-card">
               <Settings2 className="size-3.5" />
             </span>
-            <span className="text-[12.5px]">Workspace settings</span>
+            <span className="text-[0.7812rem]">Workspace settings</span>
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

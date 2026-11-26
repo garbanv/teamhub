@@ -92,7 +92,7 @@ export function ProjectActionsMenu({
             <MoreHorizontal className="size-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[190px]">
+        <DropdownMenuContent align="end" className="w-[11.875rem]">
           <DropdownMenuItem asChild>
             <Link
               href={`/w/${workspaceSlug}/projects/${project.key}/settings`}
@@ -118,7 +118,7 @@ export function ProjectActionsMenu({
       </DropdownMenu>
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[25rem]">
           <DialogHeader>
             <DialogTitle>
               {archived ? "Restore" : "Archive"} {project.name}?

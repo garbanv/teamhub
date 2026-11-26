@@ -62,7 +62,7 @@ function NavItem({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group flex h-8 items-center gap-2.5 rounded-md px-2 text-[12.5px] font-medium transition-colors duration-100",
+        "group flex h-8 items-center gap-2.5 rounded-md px-2 text-[0.7812rem] font-medium transition-colors duration-100",
         active
           ? "bg-sidebar-accent text-sidebar-accent-foreground"
           : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
@@ -91,7 +91,7 @@ function SectionLabel({
 }) {
   return (
     <div className="mb-1 flex h-6 items-center justify-between px-2">
-      <span className="text-[9.5px] font-semibold tracking-[0.13em] text-muted-foreground/60 uppercase">
+      <span className="text-[0.5938rem] font-semibold tracking-[0.13em] text-muted-foreground/60 uppercase">
         {children}
       </span>
       {action}
@@ -129,11 +129,11 @@ export function SidebarContent({
             onNavigate?.();
             openCommandMenu();
           }}
-          className="mt-2.5 flex h-8 w-full items-center gap-2 rounded-md border border-sidebar-border bg-card/40 px-2.5 text-left text-[12px] text-muted-foreground/75 transition-colors hover:border-sidebar-border hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring/50 focus-visible:outline-none"
+          className="mt-2.5 flex h-8 w-full items-center gap-2 rounded-md border border-sidebar-border bg-card/40 px-2.5 text-left text-[0.75rem] text-muted-foreground/75 transition-colors hover:border-sidebar-border hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring/50 focus-visible:outline-none"
         >
           <Search className="size-3.5 shrink-0" />
           <span className="flex-1 truncate">Search or jump to…</span>
-          <kbd className="rounded border border-border/80 bg-muted/60 px-1 py-0.5 text-[9px] font-medium text-muted-foreground/70">
+          <kbd className="rounded border border-border/80 bg-muted/60 px-1 py-0.5 text-[0.5625rem] font-medium text-muted-foreground/70">
             ⌘K
           </kbd>
         </button>
@@ -204,7 +204,7 @@ export function SidebarContent({
               <Link
                 href={`${base}/projects`}
                 onClick={onNavigate}
-                className="flex h-8 items-center gap-2 rounded-md px-2 text-[12px] text-muted-foreground/65 transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
+                className="flex h-8 items-center gap-2 rounded-md px-2 text-[0.75rem] text-muted-foreground/65 transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
               >
                 <FolderKanban className="size-3.5" />
                 <span className="truncate">No projects yet</span>
@@ -221,7 +221,7 @@ export function SidebarContent({
                       : undefined
                   }
                   className={cn(
-                    "group flex h-8 items-center gap-2.5 rounded-md px-2 text-[12.5px] font-medium transition-colors",
+                    "group flex h-8 items-center gap-2.5 rounded-md px-2 text-[0.7812rem] font-medium transition-colors",
                     pathname.startsWith(`${base}/projects/${project.key}`)
                       ? "bg-sidebar-accent text-sidebar-accent-foreground"
                       : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
@@ -234,7 +234,7 @@ export function SidebarContent({
                   <span className="min-w-0 flex-1 truncate">
                     {project.name}
                   </span>
-                  <span className="text-[9px] font-normal tracking-wide text-muted-foreground/40 uppercase opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="text-[0.5625rem] font-normal tracking-wide text-muted-foreground/40 uppercase opacity-0 transition-opacity group-hover:opacity-100">
                     {project.key}
                   </span>
                 </Link>
@@ -271,10 +271,10 @@ export function SidebarContent({
                   <UserPlus className="size-3.5" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[11.5px] font-medium">
+                  <span className="block text-[0.7188rem] font-medium">
                     Invite teammates
                   </span>
-                  <span className="block text-[10px] text-muted-foreground">
+                  <span className="block text-[0.625rem] text-muted-foreground">
                     Share a private link
                   </span>
                 </span>
@@ -287,11 +287,11 @@ export function SidebarContent({
       <div className="shrink-0 border-t border-sidebar-border/80 p-2.5">
         <UserMenu user={user} workspaceSlug={workspace.slug} />
         <div className="mt-1 flex items-center justify-between px-2">
-          <span className="flex items-center gap-1 text-[9.5px] text-muted-foreground/40">
+          <span className="flex items-center gap-1 text-[0.5938rem] text-muted-foreground/40">
             <Hash className="size-2.5" />
             Hub
           </span>
-          <span className="text-[9px] text-muted-foreground/30">v0.1</span>
+          <span className="text-[0.5625rem] text-muted-foreground/30">v0.1</span>
         </div>
       </div>
     </div>
@@ -307,12 +307,12 @@ function PlaceholderItem({
 }) {
   return (
     <div
-      className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2 text-[12.5px] font-medium text-sidebar-foreground/40"
+      className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2 text-[0.7812rem] font-medium text-sidebar-foreground/40"
       title={`${label} is coming in a later step`}
     >
       <Icon className="size-3.5 shrink-0" />
       <span className="flex-1">{label}</span>
-      <span className="rounded border border-border/60 bg-muted/30 px-1 py-0.5 text-[8px] font-medium tracking-wide text-muted-foreground/50 uppercase">
+      <span className="rounded border border-border/60 bg-muted/30 px-1 py-0.5 text-[0.5rem] font-medium tracking-wide text-muted-foreground/50 uppercase">
         Soon
       </span>
     </div>

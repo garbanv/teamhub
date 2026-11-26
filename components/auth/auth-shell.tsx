@@ -36,18 +36,18 @@ function MockTask({
       <div className="min-w-0 flex-1">
         <p
           className={cn(
-            "truncate text-[12.5px] font-medium text-white/85",
+            "truncate text-[0.7812rem] font-medium text-white/85",
             done && "text-white/40 line-through",
           )}
         >
           {title}
         </p>
-        <p className="mt-0.5 font-mono text-[9.5px] tracking-wide text-white/30">
+        <p className="mt-0.5 font-mono text-[0.5938rem] tracking-wide text-white/30">
           {code}
         </p>
       </div>
       <span
-        className="hidden items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[9.5px] font-medium text-white/60 sm:inline-flex"
+        className="hidden items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[0.5938rem] font-medium text-white/60 sm:inline-flex"
         title={status}
       >
         <span
@@ -58,7 +58,7 @@ function MockTask({
       </span>
       <span
         className={cn(
-          "flex size-6 shrink-0 items-center justify-center rounded-full border border-white/10 text-[8.5px] font-semibold text-white",
+          "flex size-6 shrink-0 items-center justify-center rounded-full border border-white/10 text-[0.5312rem] font-semibold text-white",
           avatarClass,
         )}
       >
@@ -85,49 +85,49 @@ export function AuthShell({
 
         <div className="relative z-10 flex items-center justify-between px-10 py-8">
           <Logo className="text-white [&>span:last-child]:text-white" />
-          <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/45">
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[0.625rem] font-medium tracking-wide text-white/45">
             Team workspace
           </span>
         </div>
 
         <div className="relative z-10 flex flex-1 flex-col justify-center px-10 pb-8 xl:px-16">
-          <div className="max-w-[480px]">
-            <p className="mb-5 flex items-center gap-2 text-[11px] font-medium tracking-[0.14em] text-white/40 uppercase">
+          <div className="max-w-[30rem]">
+            <p className="mb-5 flex items-center gap-2 text-[0.6875rem] font-medium tracking-[0.14em] text-white/40 uppercase">
               <span className="h-px w-5 bg-brand/80" />
               Focus, together
             </p>
-            <h1 className="text-balance text-[40px] leading-[1.08] font-semibold tracking-[-0.035em] text-white xl:text-[46px]">
+            <h1 className="text-balance text-[2.5rem] leading-[1.08] font-semibold tracking-[-0.035em] text-white xl:text-[2.875rem]">
               The calm center of your team&apos;s work.
             </h1>
-            <p className="mt-5 max-w-[390px] text-[14px] leading-6 text-white/45">
+            <p className="mt-5 max-w-[24.375rem] text-[0.875rem] leading-6 text-white/45">
               Projects, tasks, and the conversations around them — organized in
               one fast, quiet place.
             </p>
           </div>
 
-          <div className="relative mt-12 max-w-[470px]">
+          <div className="relative mt-12 max-w-[29.375rem]">
             <div className="absolute -inset-3 rounded-[20px] bg-gradient-to-br from-white/[0.05] to-transparent blur-xl" />
             <div className="relative overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#141419]/90 shadow-[0_30px_90px_-24px_rgba(0,0,0,0.75)] backdrop-blur">
               <div className="flex items-center justify-between px-4 py-3.5">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex size-6 items-center justify-center rounded-[7px] bg-indigo-500/15 text-[10px] font-semibold text-indigo-300">
+                  <span className="flex size-6 items-center justify-center rounded-[7px] bg-indigo-500/15 text-[0.625rem] font-semibold text-indigo-300">
                     W
                   </span>
                   <div>
-                    <p className="text-[12px] font-medium text-white/80">
+                    <p className="text-[0.75rem] font-medium text-white/80">
                       Website refresh
                     </p>
-                    <p className="text-[9.5px] text-white/30">WEB · Q4 launch</p>
+                    <p className="text-[0.5938rem] text-white/30">WEB · Q4 launch</p>
                   </div>
                 </div>
                 <div className="flex -space-x-1.5">
-                  <span className="flex size-5 items-center justify-center rounded-full border border-[#141419] bg-rose-400/80 text-[7px] font-semibold text-white">
+                  <span className="flex size-5 items-center justify-center rounded-full border border-[#141419] bg-rose-400/80 text-[0.4375rem] font-semibold text-white">
                     PS
                   </span>
-                  <span className="flex size-5 items-center justify-center rounded-full border border-[#141419] bg-amber-400/80 text-[7px] font-semibold text-white">
+                  <span className="flex size-5 items-center justify-center rounded-full border border-[#141419] bg-amber-400/80 text-[0.4375rem] font-semibold text-white">
                     JW
                   </span>
-                  <span className="flex size-5 items-center justify-center rounded-full border border-[#141419] bg-teal-400/80 text-[7px] font-semibold text-white">
+                  <span className="flex size-5 items-center justify-center rounded-full border border-[#141419] bg-teal-400/80 text-[0.4375rem] font-semibold text-white">
                     MC
                   </span>
                 </div>
@@ -164,19 +164,19 @@ export function AuthShell({
                 <Check className="size-3.5" strokeWidth={2.5} />
               </span>
               <div>
-                <p className="text-[10.5px] font-medium text-white/75">
+                <p className="text-[0.6562rem] font-medium text-white/75">
                   Sprint 24
                 </p>
-                <p className="text-[9px] text-white/35">86% complete</p>
+                <p className="text-[0.5625rem] text-white/35">86% complete</p>
               </div>
-              <span className="ml-3 flex size-7 items-center justify-center rounded-md border border-white/10 text-[9px] text-white/45">
+              <span className="ml-3 flex size-7 items-center justify-center rounded-md border border-white/10 text-[0.5625rem] text-white/45">
                 3d
               </span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center justify-between border-t border-white/[0.06] px-10 py-5 text-[10.5px] text-white/30 xl:px-16">
+        <div className="relative z-10 flex items-center justify-between border-t border-white/[0.06] px-10 py-5 text-[0.6562rem] text-white/30 xl:px-16">
           <span>Built for focused teams.</span>
           <span className="flex items-center gap-1.5">
             <Command className="size-3" />
@@ -194,14 +194,14 @@ export function AuthShell({
           >
             <Logo />
           </Link>
-          <span className="text-[11px] text-muted-foreground/70">
+          <span className="text-[0.6875rem] text-muted-foreground/70">
             {footer}
           </span>
         </div>
         <div className="flex flex-1 items-center justify-center px-6 pb-20">
-          <div className="w-full max-w-[356px] animate-rise">{children}</div>
+          <div className="w-full max-w-[22.25rem] animate-rise">{children}</div>
         </div>
-        <div className="px-6 py-5 text-center text-[10.5px] text-muted-foreground/60">
+        <div className="px-6 py-5 text-center text-[0.6562rem] text-muted-foreground/60">
           © {new Date().getFullYear()} Hub · Calm software for busy teams
         </div>
       </main>

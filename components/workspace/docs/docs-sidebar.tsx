@@ -376,14 +376,14 @@ export function DocsSidebar({
               onClick={onNavigate}
               className="flex min-w-0 flex-1 items-center gap-1.5"
             >
-              <span className="flex size-4 shrink-0 items-center justify-center text-[12px]">
+              <span className="flex size-4 shrink-0 items-center justify-center text-[0.75rem]">
                 {node.icon || (
                   <FileText className="size-3 text-muted-foreground/60" />
                 )}
               </span>
               <span
                 className={cn(
-                  "truncate text-[11.5px]",
+                  "truncate text-[0.7188rem]",
                   isActive && "font-medium",
                 )}
               >
@@ -415,7 +415,7 @@ export function DocsSidebar({
                   <MoreHorizontal className="size-3" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[180px]">
+              <DropdownMenuContent align="end" className="w-[11.25rem]">
                 <DropdownMenuItem
                   onSelect={() => createPage(node.id)}
                   className="gap-2"
@@ -452,7 +452,7 @@ export function DocsSidebar({
           href={docsBase}
           onClick={onNavigate}
           className={cn(
-            "min-w-0 flex-1 truncate text-[12.5px] font-medium transition-colors hover:text-sidebar-foreground",
+            "min-w-0 flex-1 truncate text-[0.7812rem] font-medium transition-colors hover:text-sidebar-foreground",
             pathname.startsWith(docsBase)
               ? "text-sidebar-foreground"
               : "text-sidebar-foreground/75",
@@ -480,7 +480,7 @@ export function DocsSidebar({
         <button
           type="button"
           onClick={() => createPage(null)}
-          className="ml-4 flex h-7 items-center gap-1.5 rounded px-2 text-[10.5px] text-muted-foreground/55 hover:bg-sidebar-accent/50 hover:text-foreground"
+          className="ml-4 flex h-7 items-center gap-1.5 rounded px-2 text-[0.6562rem] text-muted-foreground/55 hover:bg-sidebar-accent/50 hover:text-foreground"
         >
           <Plus className="size-3" />
           Add your first page
@@ -503,7 +503,7 @@ export function DocsSidebar({
                 handleDrop({ pageId: null, position: "root" });
               }}
               className={cn(
-                "mt-1 flex h-7 items-center rounded border border-dashed border-border/70 px-2 text-[10px] text-muted-foreground/50",
+                "mt-1 flex h-7 items-center rounded border border-dashed border-border/70 px-2 text-[0.625rem] text-muted-foreground/50",
                 dropTarget?.position === "root" &&
                   "border-primary/40 bg-primary/5 text-primary",
               )}

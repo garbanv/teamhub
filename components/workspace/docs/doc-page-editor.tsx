@@ -224,7 +224,7 @@ export function DocPageEditor({
   }
 
   return (
-    <div className="mx-auto w-full max-w-[900px] px-4 pb-20 sm:px-7 lg:px-10">
+    <div className="mx-auto w-full max-w-[56.25rem] px-4 pb-20 sm:px-7 lg:px-10">
       <div className="relative">
         {coverUrl ? (
           <div className="group relative -mx-4 h-40 overflow-hidden border-b border-border/60 sm:-mx-7 sm:h-48 lg:-mx-10 lg:rounded-b-xl">
@@ -265,7 +265,7 @@ export function DocPageEditor({
             <button
               type="button"
               onClick={() => coverInputRef.current?.click()}
-              className="flex items-center gap-1.5 rounded px-2 py-1 text-[10px] text-muted-foreground/45 transition-colors hover:bg-accent hover:text-foreground"
+              className="flex items-center gap-1.5 rounded px-2 py-1 text-[0.625rem] text-muted-foreground/45 transition-colors hover:bg-accent hover:text-foreground"
             >
               {uploadingCover ? (
                 <Loader2 className="size-3 animate-spin" />
@@ -284,13 +284,13 @@ export function DocPageEditor({
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="flex size-14 items-center justify-center rounded-xl border border-transparent text-[38px] leading-none transition-colors hover:border-border hover:bg-card"
+                className="flex size-14 items-center justify-center rounded-xl border border-transparent text-[2.375rem] leading-none transition-colors hover:border-border hover:bg-card"
                 aria-label="Change page icon"
               >
                 {icon || <Smile className="size-6 text-muted-foreground/40" />}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[292px] p-2">
+            <DropdownMenuContent align="start" className="w-[18.25rem] p-2">
               <div className="grid grid-cols-8 gap-0.5">
                 {pageEmoji.map((emoji) => (
                   <button
@@ -300,7 +300,7 @@ export function DocPageEditor({
                       setIconPickerOpen(false);
                       void saveIcon(emoji);
                     }}
-                    className="flex size-7 items-center justify-center rounded text-[17px] transition-colors hover:bg-accent"
+                    className="flex size-7 items-center justify-center rounded text-[1.0625rem] transition-colors hover:bg-accent"
                   >
                     {emoji}
                   </button>
@@ -324,7 +324,7 @@ export function DocPageEditor({
           <div className="mb-1.5 ml-auto flex items-center gap-2">
             <span
               className={cn(
-                "flex items-center gap-1 text-[9.5px] transition-colors",
+                "flex items-center gap-1 text-[0.5938rem] transition-colors",
                 saveState === "saved"
                   ? "text-muted-foreground/45"
                   : saveState === "error"
@@ -343,7 +343,7 @@ export function DocPageEditor({
             <UserAvatar
               name={currentUser.name}
               image={currentUser.image}
-              className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[6px]"
+              className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[0.375rem]"
             />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -383,10 +383,10 @@ export function DocPageEditor({
           placeholder="Untitled"
           maxLength={200}
           aria-label="Page title"
-          className="mt-2 w-full bg-transparent text-[34px] leading-tight font-semibold tracking-[-0.04em] outline-none placeholder:text-muted-foreground/25 sm:text-[40px]"
+          className="mt-2 w-full bg-transparent text-[2.125rem] leading-tight font-semibold tracking-[-0.04em] outline-none placeholder:text-muted-foreground/25 sm:text-[2.5rem]"
         />
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-muted-foreground/55">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.625rem] text-muted-foreground/55">
           <span>
             Last edited{" "}
             {page.lastEditedByName
@@ -409,7 +409,7 @@ export function DocPageEditor({
           />
         </div>
 
-        <p className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground/40">
+        <p className="mt-2 flex items-center gap-1 text-[0.625rem] text-muted-foreground/40">
           <Upload className="size-2.5" />
           Type / to insert blocks, images, and file attachments.
         </p>

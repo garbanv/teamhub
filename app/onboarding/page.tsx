@@ -35,7 +35,7 @@ export default async function OnboardingPage({
         {workspaces.length > 0 && (
           <Link
             href={`/w/${workspaces[0]!.slug}`}
-            className="mb-7 inline-flex items-center gap-1.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
+            className="mb-7 inline-flex items-center gap-1.5 text-[0.75rem] text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-3.5" />
             Back to {workspaces[0]!.name}
@@ -43,13 +43,13 @@ export default async function OnboardingPage({
         )}
 
         <div className="mb-8">
-          <p className="mb-3 text-[11px] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
+          <p className="mb-3 text-[0.6875rem] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
             {creatingAnother ? "New workspace" : `Hi, ${firstName}`}
           </p>
-          <h1 className="text-[27px] font-semibold tracking-[-0.03em]">
+          <h1 className="text-[1.6875rem] font-semibold tracking-[-0.03em]">
             {creatingAnother ? "Create another workspace" : "Make a home for your team"}
           </h1>
-          <p className="mt-2 text-[13px] leading-5 text-muted-foreground">
+          <p className="mt-2 text-[0.8125rem] leading-5 text-muted-foreground">
             {creatingAnother
               ? "Keep a separate space for another team or project."
               : "Set up your workspace, then invite the people you work with."}
@@ -63,10 +63,10 @@ export default async function OnboardingPage({
               color={workspaces[0]!.logoColor}
             />
             <div className="min-w-0">
-              <p className="truncate text-[12.5px] font-medium">
+              <p className="truncate text-[0.7812rem] font-medium">
                 {workspaces[0]!.name}
               </p>
-              <p className="text-[10.5px] text-muted-foreground">
+              <p className="text-[0.6562rem] text-muted-foreground">
                 {workspaces[0]!.memberCount} member
                 {workspaces[0]!.memberCount === 1 ? "" : "s"}
               </p>
@@ -79,7 +79,7 @@ export default async function OnboardingPage({
           defaultName={workspaces.length === 0 ? `${firstName}'s workspace` : ""}
         />
 
-        <p className="mt-7 text-center text-[11px] leading-4 text-muted-foreground/60">
+        <p className="mt-7 text-center text-[0.6875rem] leading-4 text-muted-foreground/60">
           Signed in as {user.email}
         </p>
       </div>

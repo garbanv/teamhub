@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   ChevronRight,
   Menu,
+  PanelLeft,
   Plus,
   Search,
   UserPlus,
@@ -35,6 +36,7 @@ export function Topbar({
   notifications,
   unreadCount,
   onOpenMobileNav,
+  onToggleSidebar,
 }: {
   workspace: WorkspaceSummary;
   projects: ProjectNavItem[];
@@ -42,6 +44,7 @@ export function Topbar({
   notifications: NotificationSummary[];
   unreadCount: number;
   onOpenMobileNav: () => void;
+  onToggleSidebar: () => void;
 }) {
   const pathname = usePathname();
   const { open: openCommandMenu } = useCommandMenu();
@@ -59,17 +62,26 @@ export function Topbar({
         <Menu className="size-4" />
       </button>
 
+      <button
+        onClick={onToggleSidebar}
+        className="hidden size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:flex"
+        aria-label="Show or hide sidebar"
+        title="Show or hide sidebar (Ctrl/Cmd + \)"
+      >
+        <PanelLeft className="size-4" />
+      </button>
+
       <div className="flex min-w-0 items-center gap-2">
         <WorkspaceGlyph
           name={workspace.name}
           color={workspace.logoColor}
-          className="size-6 rounded-md text-[9px] lg:hidden"
+          className="size-6 rounded-md text-[0.5625rem] lg:hidden"
         />
-        <div className="hidden items-center gap-1.5 text-[12.5px] text-muted-foreground lg:flex">
-          <span className="max-w-[160px] truncate">{workspace.name}</span>
+        <div className="hidden items-center gap-1.5 text-[0.7812rem] text-muted-foreground lg:flex">
+          <span className="max-w-[10rem] truncate">{workspace.name}</span>
           <ChevronRight className="size-3 text-muted-foreground/40" />
         </div>
-        <span className="truncate text-[13px] font-medium tracking-[-0.01em]">
+        <span className="truncate text-[0.8125rem] font-medium tracking-[-0.01em]">
           {title}
         </span>
       </div>
@@ -77,11 +89,11 @@ export function Topbar({
       <div className="ml-auto flex items-center gap-1.5">
         <button
           onClick={openCommandMenu}
-          className="hidden h-8 items-center gap-2 rounded-md border border-border/80 bg-card/60 px-2.5 text-[11.5px] text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none sm:flex"
+          className="hidden h-8 items-center gap-2 rounded-md border border-border/80 bg-card/60 px-2.5 text-[0.7188rem] text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none sm:flex"
         >
           <Search className="size-3.5" />
           <span className="hidden md:inline">Search</span>
-          <kbd className="ml-2 rounded border border-border/80 bg-muted/60 px-1 py-0.5 text-[9px] font-medium text-muted-foreground/60">
+          <kbd className="ml-2 rounded border border-border/80 bg-muted/60 px-1 py-0.5 text-[0.5625rem] font-medium text-muted-foreground/60">
             ⌘K
           </kbd>
         </button>
@@ -153,6 +165,7 @@ function pageTitle(
   if (path === "overdue") return "Overdue";
   if (path === "due-soon") return "Due Soon";
   if (path === "settings") return "Settings";
+  if (path === "preferences") return "My preferences";
   if (path === "projects") return "Projects";
   if (path === "docs") return "Docs";
   if (path.startsWith("docs/")) {

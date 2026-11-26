@@ -40,7 +40,7 @@ export function Logo({
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <HubMark />
       {showWordmark && (
-        <span className="text-[15px] font-semibold tracking-[-0.02em]">
+        <span className="text-[0.9375rem] font-semibold tracking-[-0.02em]">
           Hub
         </span>
       )}
@@ -61,7 +61,7 @@ export function WorkspaceGlyph({
   return (
     <span
       className={cn(
-        "relative inline-flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-[8px] text-[11px] font-semibold tracking-wide text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(16,16,24,0.12)]",
+        "relative inline-flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-[8px] text-[0.6875rem] font-semibold tracking-wide text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_2px_rgba(16,16,24,0.12)]",
         className,
       )}
       style={{

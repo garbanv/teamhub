@@ -199,8 +199,8 @@ export function WorkflowManager({
     <div>
       <div className="flex items-center justify-between border-b border-border/70 px-4 py-3 sm:px-5">
         <div>
-          <p className="text-[12.5px] font-medium">Workflow statuses</p>
-          <p className="mt-0.5 text-[10.5px] text-muted-foreground">
+          <p className="text-[0.7812rem] font-medium">Workflow statuses</p>
+          <p className="mt-0.5 text-[0.6562rem] text-muted-foreground">
             {canManage
               ? "Grouped into five fixed categories. Move statuses within a category to set their order."
               : "Grouped into five fixed categories. Ask an admin to make changes."}
@@ -233,10 +233,10 @@ export function WorkflowManager({
                     backgroundColor: statusCategoryMeta[groupCategory].color,
                   }}
                 />
-                <p className="text-[10px] font-semibold tracking-[0.12em] text-muted-foreground/65 uppercase">
+                <p className="text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground/65 uppercase">
                   {statusCategoryLabels[groupCategory]}
                 </p>
-                <span className="text-[9.5px] text-muted-foreground/40">
+                <span className="text-[0.5938rem] text-muted-foreground/40">
                   {group.length}
                 </span>
                 {canManage && (
@@ -252,7 +252,7 @@ export function WorkflowManager({
               </div>
 
               {group.length === 0 ? (
-                <div className="rounded-md border border-dashed border-border/80 px-3 py-2 text-[10.5px] text-muted-foreground/55">
+                <div className="rounded-md border border-dashed border-border/80 px-3 py-2 text-[0.6562rem] text-muted-foreground/55">
                   No statuses in this category.
                 </div>
               ) : (
@@ -266,7 +266,7 @@ export function WorkflowManager({
                         className="size-2 shrink-0 rounded-full"
                         style={{ backgroundColor: status.color }}
                       />
-                      <span className="min-w-0 flex-1 truncate text-[12px]">
+                      <span className="min-w-0 flex-1 truncate text-[0.75rem]">
                         {status.name}
                       </span>
                       {canManage && (
@@ -306,7 +306,7 @@ export function WorkflowManager({
                               <Pencil className="size-3" />
                             </button>
                           </div>
-                          <span className="text-[9px] text-muted-foreground/30">
+                          <span className="text-[0.5625rem] text-muted-foreground/30">
                             {index + 1}
                           </span>
                         </>
@@ -321,7 +321,7 @@ export function WorkflowManager({
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[25rem]">
           <DialogHeader>
             <DialogTitle>
               {editing ? `Edit ${editing.name}` : "Add a status"}

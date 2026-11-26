@@ -68,7 +68,7 @@ export function DeleteTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[430px]">
+      <DialogContent className="sm:max-w-[26.875rem]">
         <DialogHeader>
           <div className="mb-1 flex size-9 items-center justify-center rounded-full bg-destructive/10 text-destructive">
             <Trash2 className="size-4" />

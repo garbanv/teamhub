@@ -63,7 +63,7 @@ export function CreateWorkspaceForm({
           disabled={loading}
           className="h-10"
         />
-        <p className="text-[11px] leading-4 text-muted-foreground/70">
+        <p className="text-[0.6875rem] leading-4 text-muted-foreground/70">
           This is usually your company or team name. You can change it later.
         </p>
       </div>

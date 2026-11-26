@@ -30,7 +30,7 @@ export function ProjectHeader({
       {backHref && (
         <Link
           href={backHref}
-          className="mb-4 inline-flex items-center gap-1.5 text-[11.5px] text-muted-foreground transition-colors hover:text-foreground"
+          className="mb-4 inline-flex items-center gap-1.5 text-[0.7188rem] text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-3.5" />
           Back to project
@@ -46,24 +46,24 @@ export function ProjectHeader({
           />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-[25px] leading-tight font-semibold tracking-[-0.035em] sm:text-[28px]">
+              <h1 className="text-[1.5625rem] leading-tight font-semibold tracking-[-0.035em] sm:text-[1.75rem]">
                 {project.name}
               </h1>
-              <Badge variant="outline" className="font-mono text-[10px]">
+              <Badge variant="outline" className="font-mono text-[0.625rem]">
                 {project.key}
               </Badge>
               {project.archivedAt && <Badge variant="warning">Archived</Badge>}
             </div>
-            <p className="mt-1.5 max-w-[620px] text-[12.5px] leading-5 text-muted-foreground">
+            <p className="mt-1.5 max-w-[38.75rem] text-[0.7812rem] leading-5 text-muted-foreground">
               {project.description || "No description yet."}
             </p>
-            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10.5px] text-muted-foreground/70">
+            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.6562rem] text-muted-foreground/70">
               {project.leadName && (
                 <span className="flex items-center gap-1.5">
                   <UserAvatar
                     name={project.leadName}
                     image={project.leadImage}
-                    className="size-4 border-0 [&_[data-slot=avatar-fallback]]:text-[6px]"
+                    className="size-4 border-0 [&_[data-slot=avatar-fallback]]:text-[0.375rem]"
                   />
                   {project.leadName}
                 </span>

@@ -35,7 +35,7 @@ export function ProjectCard({
           <div className="flex items-center gap-2">
             <Link
               href={href}
-              className="truncate text-[13.5px] font-semibold tracking-[-0.015em] hover:underline hover:decoration-border hover:underline-offset-4"
+              className="truncate text-[0.8438rem] font-semibold tracking-[-0.015em] hover:underline hover:decoration-border hover:underline-offset-4"
             >
               {project.name}
             </Link>
@@ -46,15 +46,15 @@ export function ProjectCard({
             )}
           </div>
           <div className="mt-0.5 flex items-center gap-2">
-            <span className="font-mono text-[9.5px] tracking-wider text-muted-foreground/65 uppercase">
+            <span className="font-mono text-[0.5938rem] tracking-wider text-muted-foreground/65 uppercase">
               {project.key}
             </span>
             {project.leadName && (
-              <span className="flex items-center gap-1 text-[10px] text-muted-foreground/65">
+              <span className="flex items-center gap-1 text-[0.625rem] text-muted-foreground/65">
                 <UserAvatar
                   name={project.leadName}
                   image={project.leadImage}
-                  className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[7px]"
+                  className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[0.4375rem]"
                 />
                 {project.leadName}
               </span>
@@ -72,12 +72,12 @@ export function ProjectCard({
         )}
       </div>
 
-      <p className="mt-3 line-clamp-2 min-h-[32px] text-[11px] leading-4 text-muted-foreground">
+      <p className="mt-3 line-clamp-2 min-h-[32px] text-[0.6875rem] leading-4 text-muted-foreground">
         {project.description || "No description yet."}
       </p>
 
       <div className="mt-auto flex items-center justify-between border-t border-border/60 pt-2.5">
-        <span className="flex items-center gap-3 text-[10px] text-muted-foreground/70">
+        <span className="flex items-center gap-3 text-[0.625rem] text-muted-foreground/70">
           <span>
             {project.taskCount} task{project.taskCount === 1 ? "" : "s"}
           </span>
@@ -88,7 +88,7 @@ export function ProjectCard({
         </span>
         <Link
           href={href}
-          className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground/60 transition-colors hover:text-foreground"
+          className="flex items-center gap-1 text-[0.625rem] font-medium text-muted-foreground/60 transition-colors hover:text-foreground"
         >
           Open
           <ArrowUpRight className="size-3" />

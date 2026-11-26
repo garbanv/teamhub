@@ -84,7 +84,7 @@ export function RichTextEditor({
 
   if (!editor) {
     return (
-      <div className="min-h-[120px] rounded-lg border border-border bg-card px-3 py-3 text-[12px] text-muted-foreground">
+      <div className="min-h-[120px] rounded-lg border border-border bg-card px-3 py-3 text-[0.75rem] text-muted-foreground">
         Loading description…
       </div>
     );
@@ -165,7 +165,7 @@ export function RichTextEditor({
         <span className="ml-auto flex items-center gap-1.5 pr-1">
           {!readOnly && (
             <>
-              <span className="text-[9.5px] text-muted-foreground/55">
+              <span className="text-[0.5938rem] text-muted-foreground/55">
                 {state === "dirty" && "Unsaved"}
                 {state === "saving" && "Saving…"}
                 {state === "saved" && "Saved"}
@@ -174,7 +174,7 @@ export function RichTextEditor({
                 type="button"
                 onClick={save}
                 disabled={state === "saving" || state === "idle"}
-                className="flex h-6 items-center gap-1 rounded border border-border bg-card px-1.5 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-45"
+                className="flex h-6 items-center gap-1 rounded border border-border bg-card px-1.5 text-[0.625rem] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-45"
               >
                 {state === "saving" ? (
                   <Loader2 className="size-2.5 animate-spin" />

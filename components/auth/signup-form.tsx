@@ -73,13 +73,13 @@ export function SignupForm({ next }: { next?: string | null }) {
   return (
     <div>
       <div className="mb-7">
-        <p className="mb-3 text-[11px] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
+        <p className="mb-3 text-[0.6875rem] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
           {joiningWorkspace ? "You're invited" : "Get started"}
         </p>
-        <h1 className="text-[27px] font-semibold tracking-[-0.03em]">
+        <h1 className="text-[1.6875rem] font-semibold tracking-[-0.03em]">
           {joiningWorkspace ? "Create your account" : "Create your workspace"}
         </h1>
-        <p className="mt-2 text-[13px] leading-5 text-muted-foreground">
+        <p className="mt-2 text-[0.8125rem] leading-5 text-muted-foreground">
           {joiningWorkspace
             ? "Use the email address your invite was sent to."
             : "A home for your team's projects, tasks, and momentum."}
@@ -119,7 +119,7 @@ export function SignupForm({ next }: { next?: string | null }) {
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <span className="text-[11px] text-muted-foreground/60">
+            <span className="text-[0.6875rem] text-muted-foreground/60">
               8+ characters
             </span>
           </div>
@@ -148,7 +148,7 @@ export function SignupForm({ next }: { next?: string | null }) {
               maxLength={60}
               disabled={loading}
             />
-            <p className="text-[11px] leading-4 text-muted-foreground/65">
+            <p className="text-[0.6875rem] leading-4 text-muted-foreground/65">
               You can invite your team once it&apos;s created.
             </p>
           </div>
@@ -166,7 +166,7 @@ export function SignupForm({ next }: { next?: string | null }) {
         </Button>
       </form>
 
-      <p className="mt-7 text-center text-[12.5px] text-muted-foreground">
+      <p className="mt-7 text-center text-[0.7812rem] text-muted-foreground">
         Already have an account?{" "}
         <Link
           href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}
@@ -176,7 +176,7 @@ export function SignupForm({ next }: { next?: string | null }) {
         </Link>
       </p>
 
-      <p className="mt-8 text-center text-[10.5px] leading-4 text-muted-foreground/55">
+      <p className="mt-8 text-center text-[0.6562rem] leading-4 text-muted-foreground/55">
         By continuing, you agree to keep your workspace a kind and focused place.
       </p>
     </div>

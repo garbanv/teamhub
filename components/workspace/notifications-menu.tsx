@@ -116,14 +116,14 @@ export function NotificationsMenu({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[360px] p-0">
+      <DropdownMenuContent align="end" className="w-[22.5rem] p-0">
         <div className="flex items-center justify-between px-3.5 py-2.5">
-          <DropdownMenuLabel className="p-0 text-[12.5px] font-semibold tracking-normal text-foreground normal-case">
+          <DropdownMenuLabel className="p-0 text-[0.7812rem] font-semibold tracking-normal text-foreground normal-case">
             Notifications
           </DropdownMenuLabel>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[0.625rem] font-medium text-primary">
                 {unreadCount} new
               </span>
             )}
@@ -132,7 +132,7 @@ export function NotificationsMenu({
                 type="button"
                 onClick={markAllRead}
                 disabled={markingAll}
-                className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[9.5px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50"
+                className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[0.5938rem] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50"
               >
                 {markingAll ? (
                   <Loader2 className="size-2.5 animate-spin" />
@@ -150,16 +150,16 @@ export function NotificationsMenu({
             <span className="flex size-9 items-center justify-center rounded-full border border-border bg-muted/35">
               <BellOff className="size-4 text-muted-foreground" />
             </span>
-            <p className="mt-3 text-[12.5px] font-medium">
+            <p className="mt-3 text-[0.7812rem] font-medium">
               You&apos;re all caught up
             </p>
-            <p className="mt-1 max-w-[230px] text-[11px] leading-4 text-muted-foreground">
+            <p className="mt-1 max-w-[14.375rem] text-[0.6875rem] leading-4 text-muted-foreground">
               Assignments, mentions, and updates on tasks you follow will show
               up here.
             </p>
           </div>
         ) : (
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className="max-h-[25rem] overflow-y-auto">
             {notifications.map((notification) => {
               const content = (
                 <>
@@ -175,15 +175,15 @@ export function NotificationsMenu({
                     </span>
                   )}
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[11.5px] leading-4 font-medium">
+                    <span className="block text-[0.7188rem] leading-4 font-medium">
                       {notification.title}
                     </span>
                     {notification.body && (
-                      <span className="mt-0.5 line-clamp-2 block text-[10.5px] leading-4 text-muted-foreground">
+                      <span className="mt-0.5 line-clamp-2 block text-[0.6562rem] leading-4 text-muted-foreground">
                         {notification.body}
                       </span>
                     )}
-                    <span className="mt-1 block text-[9.5px] text-muted-foreground/55">
+                    <span className="mt-1 block text-[0.5938rem] text-muted-foreground/55">
                       {formatDistanceToNowStrict(
                         new Date(notification.createdAt),
                         { addSuffix: true },
@@ -227,7 +227,7 @@ export function NotificationsMenu({
           </div>
         )}
         <div className="border-t border-border/70 bg-muted/20 px-3.5 py-2">
-          <p className="text-[10px] text-muted-foreground/60">
+          <p className="text-[0.625rem] text-muted-foreground/60">
             Notifications are delivered inside Hub.
           </p>
         </div>

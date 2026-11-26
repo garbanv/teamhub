@@ -140,7 +140,7 @@ export function InviteMemberDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[430px]">
+      <DialogContent className="sm:max-w-[26.875rem]">
         {!result ? (
           <>
             <DialogHeader>
@@ -189,7 +189,7 @@ export function InviteMemberDialog({
 
               <div className="flex items-start gap-2.5 rounded-lg border border-border/80 bg-muted/35 px-3 py-2.5">
                 <Link2 className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-                <p className="text-[11.5px] leading-4 text-muted-foreground">
+                <p className="text-[0.7188rem] leading-4 text-muted-foreground">
                   The link is single-use and expires in 7 days. It only works
                   for this email address.
                 </p>
@@ -244,7 +244,7 @@ export function InviteMemberDialog({
             <div className="min-w-0 space-y-3">
               <div
                 className={cn(
-                  "flex min-w-0 items-center gap-2 rounded-lg border p-2 pl-2.5 text-[11px]",
+                  "flex min-w-0 items-center gap-2 rounded-lg border p-2 pl-2.5 text-[0.6875rem]",
                   result.emailStatus === "sent"
                     ? "border-success/25 bg-success/8 text-success"
                     : result.emailStatus === "failed"
@@ -270,7 +270,7 @@ export function InviteMemberDialog({
 
               <div className="flex min-w-0 max-w-full items-center gap-2 overflow-hidden rounded-lg border border-border bg-muted/35 p-1 pl-3">
                 <span
-                  className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground"
+                  className="min-w-0 flex-1 truncate font-mono text-[0.6875rem] text-muted-foreground"
                   title={result.url}
                 >
                   {result.url}

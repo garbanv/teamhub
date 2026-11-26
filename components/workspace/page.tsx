@@ -12,7 +12,7 @@ export function PageShell({
   return (
     <div
       className={cn(
-        "mx-auto w-full max-w-[1080px] px-5 py-7 sm:px-7 lg:px-10 lg:py-9",
+        "mx-auto w-full max-w-[67.5rem] px-5 py-7 sm:px-7 lg:px-10 lg:py-9",
         className,
       )}
     >
@@ -43,15 +43,15 @@ export function PageHeader({
     >
       <div className="min-w-0">
         {eyebrow && (
-          <div className="mb-2 flex items-center gap-2 text-[10.5px] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
+          <div className="mb-2 flex items-center gap-2 text-[0.6562rem] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
             {eyebrow}
           </div>
         )}
-        <h1 className="text-[25px] leading-tight font-semibold tracking-[-0.035em] sm:text-[28px]">
+        <h1 className="text-[1.5625rem] leading-tight font-semibold tracking-[-0.035em] sm:text-[1.75rem]">
           {title}
         </h1>
         {description && (
-          <p className="mt-1.5 max-w-[560px] text-[13px] leading-5 text-muted-foreground">
+          <p className="mt-1.5 max-w-[35rem] text-[0.8125rem] leading-5 text-muted-foreground">
             {description}
           </p>
         )}
@@ -100,9 +100,9 @@ export function CardHeader({
       )}
     >
       <div className="min-w-0">
-        <h2 className="text-[13.5px] font-semibold tracking-[-0.01em]">{title}</h2>
+        <h2 className="text-[0.8438rem] font-semibold tracking-[-0.01em]">{title}</h2>
         {description && (
-          <p className="mt-0.5 text-[11.5px] leading-4 text-muted-foreground">
+          <p className="mt-0.5 text-[0.7188rem] leading-4 text-muted-foreground">
             {description}
           </p>
         )}
@@ -135,9 +135,9 @@ export function EmptyState({
       <span className="flex size-10 items-center justify-center rounded-full border border-border bg-muted/35 text-muted-foreground/70">
         <Icon className="size-4.5" />
       </span>
-      <p className="mt-3.5 text-[13px] font-medium">{title}</p>
+      <p className="mt-3.5 text-[0.8125rem] font-medium">{title}</p>
       {description && (
-        <p className="mt-1 max-w-[320px] text-[11.5px] leading-4.5 text-muted-foreground">
+        <p className="mt-1 max-w-[20rem] text-[0.7188rem] leading-4.5 text-muted-foreground">
           {description}
         </p>
       )}

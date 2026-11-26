@@ -86,13 +86,13 @@ export default async function DocsHomePage({
       ) : (
         <Card className="mt-6 overflow-hidden">
           <div className="flex h-9 items-center border-b border-border/70 bg-muted/15 px-4">
-            <span className="text-[9.5px] font-semibold tracking-[0.12em] text-muted-foreground/55 uppercase">
+            <span className="text-[0.5938rem] font-semibold tracking-[0.12em] text-muted-foreground/55 uppercase">
               All pages
             </span>
-            <span className="ml-2 text-[9px] text-muted-foreground/40">
+            <span className="ml-2 text-[0.5625rem] text-muted-foreground/40">
               {rows.length}
             </span>
-            <span className="ml-auto hidden text-[9px] text-muted-foreground/40 sm:block">
+            <span className="ml-auto hidden text-[0.5625rem] text-muted-foreground/40 sm:block">
               Drag pages in the sidebar to reorder
             </span>
           </div>
@@ -104,22 +104,22 @@ export default async function DocsHomePage({
                 className="group flex h-10 items-center gap-2.5 px-4 transition-colors hover:bg-muted/30"
               >
                 <span
-                  className="flex size-5 shrink-0 items-center justify-center rounded text-[14px]"
+                  className="flex size-5 shrink-0 items-center justify-center rounded text-[0.875rem]"
                   style={{ marginLeft: depth * 18 }}
                 >
                   {page.icon || (
                     <FileText className="size-3.5 text-muted-foreground/55" />
                   )}
                 </span>
-                <span className="min-w-0 flex-1 truncate text-[12px] font-medium">
+                <span className="min-w-0 flex-1 truncate text-[0.75rem] font-medium">
                   {page.title || "Untitled"}
                 </span>
                 {depth > 0 && (
-                  <span className="hidden text-[9px] text-muted-foreground/35 sm:block">
+                  <span className="hidden text-[0.5625rem] text-muted-foreground/35 sm:block">
                     Nested page
                   </span>
                 )}
-                <span className="text-[9.5px] text-muted-foreground/45">
+                <span className="text-[0.5938rem] text-muted-foreground/45">
                   {page.lastEditedByName
                     ? `Edited by ${page.lastEditedByName}`
                     : "No edits yet"}
@@ -143,8 +143,8 @@ export default async function DocsHomePage({
           <Plus className="size-3.5" />
         </span>
         <div>
-          <p className="text-[11.5px] font-medium">Built for thinking together</p>
-          <p className="mt-0.5 text-[10.5px] leading-4 text-muted-foreground">
+          <p className="text-[0.7188rem] font-medium">Built for thinking together</p>
+          <p className="mt-0.5 text-[0.6562rem] leading-4 text-muted-foreground">
             Use <kbd className="rounded border border-border px-1">⌥N</kbd> to
             create a page from anywhere outside an editor. Rich blocks, file uploads, and nested
             pages are ready to go.

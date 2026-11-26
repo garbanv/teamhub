@@ -39,10 +39,10 @@ export default async function ProjectSettingsPage({
   const canManageWorkflow = canManageWorkspace(workspace.role);
 
   return (
-    <PageShell className="max-w-[900px]">
+    <PageShell className="max-w-[56.25rem]">
       <Link
         href={`/w/${workspace.slug}/projects/${project.key}`}
-        className="mb-4 inline-flex items-center gap-1.5 text-[11.5px] text-muted-foreground transition-colors hover:text-foreground"
+        className="mb-4 inline-flex items-center gap-1.5 text-[0.7188rem] text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-3.5" />
         Back to {project.name}
@@ -69,7 +69,7 @@ export default async function ProjectSettingsPage({
       {!canManageWorkflow && (
         <div className="mt-5 flex items-start gap-2.5 rounded-lg border border-border bg-muted/30 px-3.5 py-3">
           <Workflow className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-          <p className="text-[11.5px] leading-4 text-muted-foreground">
+          <p className="text-[0.7188rem] leading-4 text-muted-foreground">
             You can edit this project&apos;s details. Only workspace admins can
             change its workflow.
           </p>
@@ -98,11 +98,11 @@ export default async function ProjectSettingsPage({
                 className="size-10"
               />
               <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-semibold">{project.name}</p>
-                <p className="mt-0.5 font-mono text-[10px] tracking-wider text-muted-foreground/60 uppercase">
+                <p className="text-[0.8125rem] font-semibold">{project.name}</p>
+                <p className="mt-0.5 font-mono text-[0.625rem] tracking-wider text-muted-foreground/60 uppercase">
                   {project.key}
                 </p>
-                <p className="mt-2 text-[11.5px] leading-5 text-muted-foreground">
+                <p className="mt-2 text-[0.7188rem] leading-5 text-muted-foreground">
                   {project.description || "No description yet."}
                 </p>
               </div>
@@ -117,7 +117,7 @@ export default async function ProjectSettingsPage({
                       <UserAvatar
                         name={project.leadName}
                         image={project.leadImage}
-                        className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[7px]"
+                        className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[0.4375rem]"
                       />
                       {project.leadName}
                     </span>
@@ -145,7 +145,7 @@ export default async function ProjectSettingsPage({
         </Card>
       </div>
 
-      <p className="mt-6 text-[10px] text-muted-foreground/50">
+      <p className="mt-6 text-[0.625rem] text-muted-foreground/50">
         Project ID · <span className="font-mono">{project.id}</span>
       </p>
     </PageShell>
@@ -161,10 +161,10 @@ function ReadonlyField({
 }) {
   return (
     <div>
-      <p className="text-[9.5px] font-medium tracking-wide text-muted-foreground/60 uppercase">
+      <p className="text-[0.5938rem] font-medium tracking-wide text-muted-foreground/60 uppercase">
         {label}
       </p>
-      <div className="mt-1 text-[11.5px] font-medium">{value}</div>
+      <div className="mt-1 text-[0.7188rem] font-medium">{value}</div>
     </div>
   );
 }

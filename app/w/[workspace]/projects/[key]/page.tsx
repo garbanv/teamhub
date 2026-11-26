@@ -7,6 +7,7 @@ import { ProjectBoard } from "@/components/workspace/task/project-board";
 import { ProjectTimeline } from "@/components/workspace/task/project-timeline";
 import { ProjectTaskList } from "@/components/workspace/task/task-list";
 import { ProjectViewControls } from "@/components/workspace/task/project-view-controls";
+import { getUserPreferences } from "@/lib/preferences";
 import { getProjectByKey, getProjectStatuses } from "@/lib/projects";
 import { getSavedView, getSavedViewsForProject } from "@/lib/saved-views";
 import { getTasksForProject, getWorkspaceLabels } from "@/lib/tasks";
@@ -32,14 +33,18 @@ export default async function ProjectPage({
   const project = await getProjectByKey(workspace.id, key);
   if (!project) notFound();
 
-  const [statuses, members, labels, savedViews] = await Promise.all([
+  const [statuses, members, labels, savedViews, preferences] = await Promise.all([
     getProjectStatuses(project.id),
     getWorkspaceMembers(workspace.id),
     getWorkspaceLabels(workspace.id),
     getSavedViewsForProject(project.id, user.id),
+    getUserPreferences(user.id),
   ]);
 
-  const parsed = parseProjectTaskViewParams(rawQuery);
+  const parsed = parseProjectTaskViewParams(
+    rawQuery,
+    preferences.defaultProjectView,
+  );
   const saved = parsed.savedId
     ? await getSavedView({
         workspaceId: workspace.id,

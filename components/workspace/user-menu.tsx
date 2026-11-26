@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Settings2 } from "lucide-react";
+import { LogOut, Settings2, SlidersHorizontal } from "lucide-react";
 
 import { UserAvatar } from "@/components/user-avatar";
 import {
@@ -43,31 +43,37 @@ export function UserMenu({
             className="size-7 border-0"
           />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[12.5px] font-medium">
+            <span className="block truncate text-[0.7812rem] font-medium">
               {user.name}
             </span>
-            <span className="block truncate text-[10.5px] text-muted-foreground">
+            <span className="block truncate text-[0.6562rem] text-muted-foreground">
               {user.email}
             </span>
           </span>
           <span className="size-1.5 rounded-full bg-success/80" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" side="top" className="w-[244px]">
+      <DropdownMenuContent align="start" side="top" className="w-[15.25rem]">
         <DropdownMenuLabel className="font-normal normal-case">
           <div className="flex items-center gap-2.5 py-1">
             <UserAvatar name={user.name} image={user.image} className="size-8" />
             <div className="min-w-0">
-              <p className="truncate text-[12.5px] font-medium text-foreground">
+              <p className="truncate text-[0.7812rem] font-medium text-foreground">
                 {user.name}
               </p>
-              <p className="truncate text-[10.5px] text-muted-foreground">
+              <p className="truncate text-[0.6562rem] text-muted-foreground">
                 {user.email}
               </p>
             </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <a href={`/w/${workspaceSlug}/preferences`} className="gap-2">
+            <SlidersHorizontal className="size-3.5" />
+            My preferences
+          </a>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <a href={`/w/${workspaceSlug}/settings`} className="gap-2">
             <Settings2 className="size-3.5" />

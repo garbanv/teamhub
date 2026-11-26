@@ -288,7 +288,7 @@ export function ProjectViewControls({
               type="button"
               onClick={() => navigate({ nextView: option.value })}
               className={cn(
-                "flex h-7 items-center gap-1.5 rounded px-2.5 text-[11px] font-medium transition-colors",
+                "flex h-7 items-center gap-1.5 rounded px-2.5 text-[0.6875rem] font-medium transition-colors",
                 view === option.value
                   ? "bg-accent text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
@@ -301,7 +301,7 @@ export function ProjectViewControls({
           ))}
         </div>
 
-        <span className="text-[10px] text-muted-foreground/55">
+        <span className="text-[0.625rem] text-muted-foreground/55">
           {taskCount} task{taskCount === 1 ? "" : "s"}
           {activeFilters ? " matching" : ""}
         </span>
@@ -319,14 +319,14 @@ export function ProjectViewControls({
             <SlidersHorizontal className="size-3.5" />
             Filters
             {activeFilterCount > 0 && (
-              <span className="ml-0.5 flex size-4 items-center justify-center rounded-full bg-primary/15 text-[9px] text-primary">
+              <span className="ml-0.5 flex size-4 items-center justify-center rounded-full bg-primary/15 text-[0.5625rem] text-primary">
                 {activeFilterCount}
               </span>
             )}
           </Button>
 
           {view === "timeline" ? (
-            <span className="flex h-8 items-center gap-1.5 rounded-md border border-border/80 bg-card px-2.5 text-[10px] text-muted-foreground/60">
+            <span className="flex h-8 items-center gap-1.5 rounded-md border border-border/80 bg-card px-2.5 text-[0.625rem] text-muted-foreground/60">
               <CalendarRange className="size-3" />
               By due date
             </span>
@@ -337,9 +337,9 @@ export function ProjectViewControls({
                 navigate({ nextSort: value as TaskSortOption })
               }
             >
-              <SelectTrigger size="sm" className="h-8 w-[168px] text-[11px]">
+              <SelectTrigger size="sm" className="h-8 w-[10.5rem] text-[0.6875rem]">
                 <span className="flex min-w-0 items-center gap-1.5">
-                  <span className="text-[9px] font-normal text-muted-foreground/45">
+                  <span className="text-[0.5625rem] font-normal text-muted-foreground/45">
                     Sort
                   </span>
                   <SelectValue />
@@ -359,16 +359,16 @@ export function ProjectViewControls({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8">
                 <Bookmark className="size-3.5" />
-                <span className="max-w-[118px] truncate">
+                <span className="max-w-[7.375rem] truncate">
                   {activeSaved ? activeSaved.name : "Saved views"}
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[260px]">
+            <DropdownMenuContent align="end" className="w-[16.25rem]">
               {savedViews.length === 0 ? (
                 <div className="px-2 py-4 text-center">
-                  <p className="text-[11.5px] font-medium">No saved views</p>
-                  <p className="mt-1 text-[10px] text-muted-foreground">
+                  <p className="text-[0.7188rem] font-medium">No saved views</p>
+                  <p className="mt-1 text-[0.625rem] text-muted-foreground">
                     Set filters and save the view for next time.
                   </p>
                 </div>
@@ -417,7 +417,7 @@ export function ProjectViewControls({
                             <span className="min-w-0 flex-1 truncate">
                               {saved.name}
                             </span>
-                            <span className="text-[9px] text-muted-foreground">
+                            <span className="text-[0.5625rem] text-muted-foreground">
                               {saved.ownerName}
                             </span>
                           </DropdownMenuItem>
@@ -474,7 +474,7 @@ export function ProjectViewControls({
               key={chip.key}
               type="button"
               onClick={() => removeFilter(chip.key)}
-              className="flex items-center gap-1.5 rounded-md border border-border/80 bg-card px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-md border border-border/80 bg-card px-2 py-1 text-[0.625rem] text-muted-foreground transition-colors hover:text-foreground"
             >
               {chip.color && (
                 <span
@@ -489,7 +489,7 @@ export function ProjectViewControls({
           <button
             type="button"
             onClick={() => navigate({ nextFilters: {} })}
-            className="ml-0.5 text-[10px] text-muted-foreground/55 underline decoration-border underline-offset-4 hover:text-foreground"
+            className="ml-0.5 text-[0.625rem] text-muted-foreground/55 underline decoration-border underline-offset-4 hover:text-foreground"
           >
             Clear all
           </button>
@@ -497,7 +497,7 @@ export function ProjectViewControls({
       )}
 
       <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
-        <DialogContent className="sm:max-w-[470px]">
+        <DialogContent className="sm:max-w-[29.375rem]">
           <DialogHeader>
             <DialogTitle>Filter tasks</DialogTitle>
             <DialogDescription>
@@ -664,7 +664,7 @@ export function ProjectViewControls({
       </Dialog>
 
       <Dialog open={saveOpen} onOpenChange={setSaveOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[25rem]">
           <DialogHeader>
             <DialogTitle>Save this view</DialogTitle>
             <DialogDescription>
@@ -693,23 +693,23 @@ export function ProjectViewControls({
                 className="mt-0.5 size-3.5 accent-[var(--primary)]"
               />
               <span>
-                <span className="block text-[11.5px] font-medium">
+                <span className="block text-[0.7188rem] font-medium">
                   Share with the workspace
                 </span>
-                <span className="block text-[10px] text-muted-foreground">
+                <span className="block text-[0.625rem] text-muted-foreground">
                   Everyone with project access can apply this view.
                 </span>
               </span>
             </label>
 
             <div className="flex flex-wrap gap-1.5">
-              <span className="rounded-md border border-border bg-muted/25 px-2 py-1 text-[9.5px] text-muted-foreground capitalize">
+              <span className="rounded-md border border-border bg-muted/25 px-2 py-1 text-[0.5938rem] text-muted-foreground capitalize">
                 {view}
               </span>
-              <span className="rounded-md border border-border bg-muted/25 px-2 py-1 text-[9.5px] text-muted-foreground">
+              <span className="rounded-md border border-border bg-muted/25 px-2 py-1 text-[0.5938rem] text-muted-foreground">
                 {taskSortLabels[sort]}
               </span>
-              <span className="rounded-md border border-border bg-muted/25 px-2 py-1 text-[9.5px] text-muted-foreground">
+              <span className="rounded-md border border-border bg-muted/25 px-2 py-1 text-[0.5938rem] text-muted-foreground">
                 {activeFilterCount} filter{activeFilterCount === 1 ? "" : "s"}
               </span>
             </div>

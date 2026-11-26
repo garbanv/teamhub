@@ -169,7 +169,7 @@ export function ProjectFormDialog({
         )}
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[540px]">
+      <DialogContent className="sm:max-w-[33.75rem]">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Create a project" : `Edit ${project!.name}`}
@@ -199,7 +199,7 @@ export function ProjectFormDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-[110px_1fr] gap-3">
+          <div className="grid grid-cols-[6.875rem_1fr] gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="project-key">Key</Label>
               <Input
@@ -235,7 +235,7 @@ export function ProjectFormDialog({
               </Select>
             </div>
           </div>
-          <p className="-mt-1 text-[10.5px] text-muted-foreground/65">
+          <p className="-mt-1 text-[0.6562rem] text-muted-foreground/65">
             Task IDs use this key, like {key || "WEB"}-12. It can be changed
             later.
           </p>

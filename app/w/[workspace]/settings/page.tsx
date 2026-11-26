@@ -36,7 +36,7 @@ export default async function SettingsPage({
   ]);
 
   return (
-    <PageShell className="max-w-[880px]">
+    <PageShell className="max-w-[55rem]">
       <PageHeader
         eyebrow={
           <>
@@ -59,7 +59,7 @@ export default async function SettingsPage({
       {!canManage && (
         <div className="mt-5 flex items-start gap-2.5 rounded-lg border border-border bg-muted/30 px-3.5 py-3">
           <Shield className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-          <p className="text-[11.5px] leading-4 text-muted-foreground">
+          <p className="text-[0.7188rem] leading-4 text-muted-foreground">
             You&apos;re a member of this workspace. Ask an owner or admin if you
             need something changed.
           </p>
@@ -103,7 +103,7 @@ export default async function SettingsPage({
           />
           {workspace.role === "owner" && (
             <div className="border-t border-border/70 px-4 py-2.5 sm:px-5">
-              <p className="text-[10px] text-muted-foreground/65">
+              <p className="text-[0.625rem] text-muted-foreground/65">
                 Owners can change roles and remove members. At least one owner
                 must remain in the workspace.
               </p>
@@ -136,7 +136,7 @@ export default async function SettingsPage({
         )}
       </div>
 
-      <p className="mt-6 text-[10px] text-muted-foreground/50">
+      <p className="mt-6 text-[0.625rem] text-muted-foreground/50">
         Workspace ID · <span className="font-mono">{workspace.id}</span>
       </p>
     </PageShell>

@@ -594,7 +594,7 @@ export function DocEditor({
                   })
                   .run()
               }
-              className="h-7 rounded border border-border bg-card px-1.5 text-[10px] text-muted-foreground outline-none"
+              className="h-7 rounded border border-border bg-card px-1.5 text-[0.625rem] text-muted-foreground outline-none"
             >
               {[
                 "plaintext",
@@ -621,18 +621,18 @@ export function DocEditor({
 
       {slash && (
         <div
-          className="absolute z-40 w-[292px] overflow-hidden rounded-xl border border-border bg-popover p-1.5 shadow-[0_18px_50px_-16px_rgba(16,16,24,0.35)]"
+          className="absolute z-40 w-[18.25rem] overflow-hidden rounded-xl border border-border bg-popover p-1.5 shadow-[0_18px_50px_-16px_rgba(16,16,24,0.35)]"
           style={{ top: slash.top, left: slash.left }}
         >
-          <p className="px-2 py-1 text-[9px] font-medium tracking-[0.12em] text-muted-foreground/50 uppercase">
+          <p className="px-2 py-1 text-[0.5625rem] font-medium tracking-[0.12em] text-muted-foreground/50 uppercase">
             {slash.query ? `Blocks matching “${slash.query}”` : "Insert a block"}
           </p>
           {filteredCommands.length === 0 ? (
-            <p className="px-2 py-4 text-center text-[11px] text-muted-foreground">
+            <p className="px-2 py-4 text-center text-[0.6875rem] text-muted-foreground">
               No blocks found.
             </p>
           ) : (
-            <div className="max-h-[286px] overflow-y-auto">
+            <div className="max-h-[17.875rem] overflow-y-auto">
               {filteredCommands.map((command, index) => (
                 <button
                   key={command.id}
@@ -652,10 +652,10 @@ export function DocEditor({
                     <command.icon className="size-3.5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[11.5px] font-medium">
+                    <span className="block text-[0.7188rem] font-medium">
                       {command.label}
                     </span>
-                    <span className="block truncate text-[9.5px] text-muted-foreground">
+                    <span className="block truncate text-[0.5938rem] text-muted-foreground">
                       {command.description}
                     </span>
                   </span>
@@ -668,7 +668,7 @@ export function DocEditor({
 
       {uploading && (
         <div className="absolute inset-x-0 top-0 flex justify-center">
-          <span className="flex items-center gap-1.5 rounded-full border border-border bg-popover px-2.5 py-1 text-[10px] text-muted-foreground shadow-md">
+          <span className="flex items-center gap-1.5 rounded-full border border-border bg-popover px-2.5 py-1 text-[0.625rem] text-muted-foreground shadow-md">
             <Loader2 className="size-3 animate-spin" />
             Uploading…
           </span>

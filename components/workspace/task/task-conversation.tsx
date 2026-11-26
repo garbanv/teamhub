@@ -176,14 +176,14 @@ export function TaskConversation({
             <TabsTrigger value="comments" className="gap-1.5">
               <MessageSquare className="size-3.5" />
               Comments
-              <span className="text-[9px] text-muted-foreground/60">
+              <span className="text-[0.5625rem] text-muted-foreground/60">
                 {items.length}
               </span>
             </TabsTrigger>
             <TabsTrigger value="activity" className="gap-1.5">
               <History className="size-3.5" />
               Activity
-              <span className="text-[9px] text-muted-foreground/60">
+              <span className="text-[0.5625rem] text-muted-foreground/60">
                 {activities.length}
               </span>
             </TabsTrigger>
@@ -195,8 +195,8 @@ export function TaskConversation({
             {items.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <MessageSquare className="mx-auto size-4 text-muted-foreground/45" />
-                <p className="mt-2 text-[12px] font-medium">No comments yet</p>
-                <p className="mt-0.5 text-[10.5px] text-muted-foreground">
+                <p className="mt-2 text-[0.75rem] font-medium">No comments yet</p>
+                <p className="mt-0.5 text-[0.6562rem] text-muted-foreground">
                   Start the conversation. Type @ to mention a teammate.
                 </p>
               </div>
@@ -211,17 +211,17 @@ export function TaskConversation({
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[11.5px] font-semibold">
+                        <span className="text-[0.7188rem] font-semibold">
                           {comment.authorName}
                         </span>
-                        <span className="text-[9.5px] text-muted-foreground/50">
+                        <span className="text-[0.5938rem] text-muted-foreground/50">
                           {formatDistanceToNowStrict(
                             new Date(comment.createdAt),
                             { addSuffix: true },
                           )}
                         </span>
                       </div>
-                      <p className="mt-1 text-[12px] leading-5 whitespace-pre-wrap text-foreground/85">
+                      <p className="mt-1 text-[0.75rem] leading-5 whitespace-pre-wrap text-foreground/85">
                         <MentionText
                           text={comment.bodyText}
                           mentions={comment.mentions}
@@ -268,13 +268,13 @@ export function TaskConversation({
                       }
                     }}
                     placeholder="Leave a comment… use @ to mention someone"
-                    className="min-h-[74px] resize-none bg-card text-[12px]"
+                    className="min-h-[74px] resize-none bg-card text-[0.75rem]"
                     disabled={posting}
                   />
 
                   {mentionQuery !== null && suggestions.length > 0 && (
-                    <div className="absolute bottom-[calc(100%+4px)] left-0 z-30 w-[230px] overflow-hidden rounded-lg border border-border bg-popover p-1 shadow-[0_12px_40px_-12px_rgba(16,16,24,0.3)]">
-                      <p className="px-2 py-1 text-[9px] font-medium tracking-wide text-muted-foreground/55 uppercase">
+                    <div className="absolute bottom-[calc(100%+4px)] left-0 z-30 w-[14.375rem] overflow-hidden rounded-lg border border-border bg-popover p-1 shadow-[0_12px_40px_-12px_rgba(16,16,24,0.3)]">
+                      <p className="px-2 py-1 text-[0.5625rem] font-medium tracking-wide text-muted-foreground/55 uppercase">
                         Mention
                       </p>
                       {suggestions.map((member) => (
@@ -282,17 +282,17 @@ export function TaskConversation({
                           key={member.userId}
                           type="button"
                           onClick={() => insertMention(member)}
-                          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[11px] transition-colors hover:bg-accent"
+                          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[0.6875rem] transition-colors hover:bg-accent"
                         >
                           <UserAvatar
                             name={member.name}
                             image={member.image}
-                            className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[6px]"
+                            className="size-5 border-0 [&_[data-slot=avatar-fallback]]:text-[0.375rem]"
                           />
                           <span className="min-w-0 flex-1 truncate">
                             {member.name}
                           </span>
-                          <span className="truncate text-[9px] text-muted-foreground/50">
+                          <span className="truncate text-[0.5625rem] text-muted-foreground/50">
                             {member.email}
                           </span>
                         </button>
@@ -301,7 +301,7 @@ export function TaskConversation({
                   )}
 
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="flex items-center gap-1 text-[9.5px] text-muted-foreground/45">
+                    <span className="flex items-center gap-1 text-[0.5938rem] text-muted-foreground/45">
                       <AtSign className="size-2.5" />
                       Mention · ⌘↵ to post
                     </span>
@@ -331,8 +331,8 @@ export function TaskConversation({
             {activities.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <History className="mx-auto size-4 text-muted-foreground/45" />
-                <p className="mt-2 text-[12px] font-medium">No activity yet</p>
-                <p className="mt-0.5 text-[10.5px] text-muted-foreground">
+                <p className="mt-2 text-[0.75rem] font-medium">No activity yet</p>
+                <p className="mt-0.5 text-[0.6562rem] text-muted-foreground">
                   Changes to this task will appear here.
                 </p>
               </div>
@@ -348,14 +348,14 @@ export function TaskConversation({
                       <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-border/70 bg-muted/30 text-muted-foreground/60">
                         <Icon className="size-3" />
                       </span>
-                      <div className="min-w-0 flex-1 text-[11px] leading-4">
+                      <div className="min-w-0 flex-1 text-[0.6875rem] leading-4">
                         <span className="font-medium text-foreground/85">
                           {activity.actorName ?? "Someone"}
                         </span>{" "}
                         <span className="text-muted-foreground">
                           {activity.description}
                         </span>
-                        <p className="mt-0.5 text-[9px] text-muted-foreground/45">
+                        <p className="mt-0.5 text-[0.5625rem] text-muted-foreground/45">
                           {formatDistanceToNowStrict(
                             new Date(activity.createdAt),
                             { addSuffix: true },

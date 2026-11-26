@@ -66,13 +66,13 @@ export function LoginForm({ next }: { next?: string | null }) {
   return (
     <div>
       <div className="mb-8">
-        <p className="mb-3 text-[11px] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
+        <p className="mb-3 text-[0.6875rem] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
           Welcome back
         </p>
-        <h1 className="text-[27px] font-semibold tracking-[-0.03em]">
+        <h1 className="text-[1.6875rem] font-semibold tracking-[-0.03em]">
           Sign in to Hub
         </h1>
-        <p className="mt-2 text-[13px] leading-5 text-muted-foreground">
+        <p className="mt-2 text-[0.8125rem] leading-5 text-muted-foreground">
           Pick up where your team left off.
         </p>
       </div>
@@ -96,7 +96,7 @@ export function LoginForm({ next }: { next?: string | null }) {
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <span className="text-[11px] text-muted-foreground/60">
+            <span className="text-[0.6875rem] text-muted-foreground/60">
               At least 8 characters
             </span>
           </div>
@@ -127,7 +127,7 @@ export function LoginForm({ next }: { next?: string | null }) {
 
       <div className="my-6 flex items-center gap-3">
         <span className="h-px flex-1 bg-border" />
-        <span className="text-[10px] font-medium tracking-wider text-muted-foreground/50 uppercase">
+        <span className="text-[0.625rem] font-medium tracking-wider text-muted-foreground/50 uppercase">
           or
         </span>
         <span className="h-px flex-1 bg-border" />
@@ -150,7 +150,7 @@ export function LoginForm({ next }: { next?: string | null }) {
         )}
       </Button>
 
-      <p className="mt-8 text-center text-[12.5px] text-muted-foreground">
+      <p className="mt-8 text-center text-[0.7812rem] text-muted-foreground">
         New to Hub?{" "}
         <Link
           href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"}

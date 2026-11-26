@@ -29,13 +29,13 @@ export default async function InvitePage({
     return (
       <InviteFrame>
         <div className="text-center">
-          <p className="text-[11px] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
+          <p className="text-[0.6875rem] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
             Invite not found
           </p>
-          <h1 className="mt-2 text-[24px] font-semibold tracking-[-0.03em]">
+          <h1 className="mt-2 text-[1.5rem] font-semibold tracking-[-0.03em]">
             This link is no longer valid
           </h1>
-          <p className="mx-auto mt-2 max-w-xs text-[13px] leading-5 text-muted-foreground">
+          <p className="mx-auto mt-2 max-w-xs text-[0.8125rem] leading-5 text-muted-foreground">
             It may have been revoked or replaced. Ask a workspace admin for a
             fresh invite.
           </p>
@@ -57,34 +57,34 @@ export default async function InvitePage({
         <WorkspaceGlyph
           name={invitation.workspaceName}
           color={invitation.workspaceLogoColor}
-          className="size-12 rounded-xl text-[16px]"
+          className="size-12 rounded-xl text-[1rem]"
         />
-        <p className="mt-5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
+        <p className="mt-5 text-[0.6875rem] font-medium tracking-[0.12em] text-muted-foreground/70 uppercase">
           You&apos;re invited
         </p>
-        <h1 className="mt-2 text-[25px] font-semibold tracking-[-0.035em]">
+        <h1 className="mt-2 text-[1.5625rem] font-semibold tracking-[-0.035em]">
           Join {invitation.workspaceName}
         </h1>
-        <p className="mt-2 max-w-sm text-[13px] leading-5 text-muted-foreground">
+        <p className="mt-2 max-w-sm text-[0.8125rem] leading-5 text-muted-foreground">
           {invitation.inviterName} invited you to collaborate on projects and
           tasks in Hub.
         </p>
 
         <div className="mt-6 w-full space-y-2.5 rounded-xl border border-border bg-card p-3.5 text-left">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11.5px] text-muted-foreground">Workspace</span>
-            <span className="text-[12.5px] font-medium">
+            <span className="text-[0.7188rem] text-muted-foreground">Workspace</span>
+            <span className="text-[0.7812rem] font-medium">
               {invitation.workspaceName}
             </span>
           </div>
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11.5px] text-muted-foreground">Invited email</span>
-            <span className="truncate text-[12.5px] font-medium">
+            <span className="text-[0.7188rem] text-muted-foreground">Invited email</span>
+            <span className="truncate text-[0.7812rem] font-medium">
               {invitation.email}
             </span>
           </div>
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11.5px] text-muted-foreground">Your role</span>
+            <span className="text-[0.7188rem] text-muted-foreground">Your role</span>
             <Badge variant="secondary">{roleLabel(invitation.role)}</Badge>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default async function InvitePage({
         {invitation.expired && (
           <div className="mt-4 flex w-full items-start gap-2.5 rounded-lg border border-warning/20 bg-warning/8 px-3 py-2.5 text-left">
             <Clock className="mt-0.5 size-3.5 shrink-0 text-warning" />
-            <p className="text-[11.5px] leading-4 text-muted-foreground">
+            <p className="text-[0.7188rem] leading-4 text-muted-foreground">
               This invite expired. Ask {invitation.inviterName} to send a new
               one.
             </p>
@@ -102,7 +102,7 @@ export default async function InvitePage({
         {invitation.accepted && (
           <div className="mt-4 flex w-full items-start gap-2.5 rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-left">
             <Mail className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-            <p className="text-[11.5px] leading-4 text-muted-foreground">
+            <p className="text-[0.7188rem] leading-4 text-muted-foreground">
               This invite has already been accepted.
             </p>
           </div>
@@ -130,10 +130,10 @@ export default async function InvitePage({
           ) : (
             <div className="space-y-3">
               <div className="rounded-lg border border-warning/25 bg-warning/10 px-3 py-2.5 text-left">
-                <p className="text-[11.5px] font-medium text-foreground/85">
+                <p className="text-[0.7188rem] font-medium text-foreground/85">
                   You&apos;re signed in as {user.email}
                 </p>
-                <p className="mt-0.5 text-[11px] leading-4 text-muted-foreground">
+                <p className="mt-0.5 text-[0.6875rem] leading-4 text-muted-foreground">
                   This invite was sent to {invitation.email}. Switch accounts to
                   accept it.
                 </p>
@@ -147,7 +147,7 @@ export default async function InvitePage({
           )}
         </div>
 
-        <p className="mt-6 text-[10.5px] text-muted-foreground/60">
+        <p className="mt-6 text-[0.6562rem] text-muted-foreground/60">
           Invite expires{" "}
           {new Intl.DateTimeFormat("en-US", {
             month: "long",
@@ -168,16 +168,16 @@ function InviteFrame({ children }: { children: React.ReactNode }) {
         <Link href="/" aria-label="Hub home">
           <Logo />
         </Link>
-        <span className="text-[11px] text-muted-foreground/60">
+        <span className="text-[0.6875rem] text-muted-foreground/60">
           Team workspace
         </span>
       </header>
       <main className="relative z-10 flex flex-1 items-center justify-center px-6 pb-24">
-        <div className="w-full max-w-[410px] rounded-2xl border border-border/80 bg-popover/90 p-7 shadow-[0_30px_90px_-40px_rgba(16,16,24,0.4)] backdrop-blur sm:p-8">
+        <div className="w-full max-w-[25.625rem] rounded-2xl border border-border/80 bg-popover/90 p-7 shadow-[0_30px_90px_-40px_rgba(16,16,24,0.4)] backdrop-blur sm:p-8">
           {children}
         </div>
       </main>
-      <footer className="relative z-10 pb-6 text-center text-[10.5px] text-muted-foreground/50">
+      <footer className="relative z-10 pb-6 text-center text-[0.6562rem] text-muted-foreground/50">
         Hub · A calmer place for team work
       </footer>
     </div>

@@ -81,7 +81,7 @@ export function DeleteDocPageDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[410px]">
+      <DialogContent className="sm:max-w-[25.625rem]">
         <DialogHeader>
           <div className="mb-1 flex size-9 items-center justify-center rounded-full bg-destructive/10 text-destructive">
             <Trash2 className="size-4" />

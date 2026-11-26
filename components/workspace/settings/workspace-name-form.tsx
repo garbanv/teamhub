@@ -69,12 +69,12 @@ export function WorkspaceNameForm({
             value={`/w/${slug}`}
             readOnly
             disabled
-            className="font-mono text-[11.5px]"
+            className="font-mono text-[0.7188rem]"
           />
         </div>
       </div>
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[10.5px] text-muted-foreground/70">
+        <p className="text-[0.6562rem] text-muted-foreground/70">
           {canEdit
             ? "The URL stays stable when you rename the workspace."
             : "Only workspace admins can change the name."}

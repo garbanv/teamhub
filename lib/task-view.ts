@@ -60,13 +60,14 @@ function first(value: string | string[] | undefined) {
 
 export function parseProjectTaskViewParams(
   searchParams: Record<string, string | string[] | undefined>,
+  defaultView: ProjectTaskView = "list",
 ) {
   const rawView = first(searchParams.view);
   const view: ProjectTaskView = projectTaskViews.includes(
     rawView as ProjectTaskView,
   )
     ? (rawView as ProjectTaskView)
-    : "list";
+    : defaultView;
 
   const rawSort = first(searchParams.sort);
   const sort: TaskSortOption = taskSortOptions.includes(
@@ -129,7 +130,7 @@ export function buildProjectViewQuery(input: {
   savedId?: string | null;
 }) {
   const params = new URLSearchParams();
-  if (input.view !== "list") params.set("view", input.view);
+  params.set("view", input.view);
 
   if (input.savedId) {
     params.set("saved", input.savedId);

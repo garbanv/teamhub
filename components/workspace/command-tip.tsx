@@ -16,15 +16,15 @@ export function CommandTip() {
         <Command className="size-4" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[12.5px] font-medium">
+        <span className="block text-[0.7812rem] font-medium">
           Jump anywhere, fast
         </span>
-        <span className="block text-[11px] leading-4 text-muted-foreground">
+        <span className="block text-[0.6875rem] leading-4 text-muted-foreground">
           Search tasks, projects, and pages.
         </span>
       </span>
       <span className="flex items-center gap-1">
-        <kbd className="rounded border border-border bg-muted/50 px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+        <kbd className="rounded border border-border bg-muted/50 px-1.5 py-0.5 text-[0.5625rem] font-medium text-muted-foreground">
           ⌘K
         </kbd>
         <CornerDownLeft className="size-3 text-muted-foreground/40" />
