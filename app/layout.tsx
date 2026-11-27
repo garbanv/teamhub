@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
 import { Providers } from "@/components/providers";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
   description:
     "Hub is a fast, calm workspace for projects, tasks, docs, and team chat.",
   applicationName: "Hub",
+  icons: { apple: "/icons/apple-touch-icon.png" },
+  appleWebApp: { capable: true, title: "Hub", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -38,6 +41,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <Providers>{children}</Providers>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
