@@ -78,6 +78,10 @@ Add these under **Environment Variables**. Set **Build time** to **Not available
 | `SMTP_FROM` | Verified sender, e.g. `Hub <notifications@yourdomain.com>` | For email |
 | `SMTP_REPLY_TO` | Optional Reply-To address | No |
 | `EMAIL_NOTIFICATION_TYPES` | Default `assigned,mentioned,comment` | No |
+| `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | Store new uploads in S3-compatible object storage (see section 5) | For S3 |
+| `S3_ENDPOINT` | Provider endpoint, e.g. `https://fra1.digitaloceanspaces.com` (empty for AWS S3) | For non-AWS |
+| `S3_REGION` | Region, e.g. `fra1` or `us-east-1` | For S3 |
+| `S3_FORCE_PATH_STYLE`, `S3_KEY_PREFIX` | `true` for MinIO-style URLs; optional folder in the bucket | No |
 
 Notes:
 
@@ -117,7 +121,9 @@ Open `https://hub.yourdomain.com/signup` and create the owner account. The produ
 
 ## 5. No persistent app volume is needed
 
-Hub stores uploaded images and attachments in PostgreSQL. The only persistent data is the Coolify PostgreSQL volume. Do not add a persistent storage mount to the app container.
+By default Hub stores uploaded images and attachments in PostgreSQL, so the only persistent data is the Coolify PostgreSQL volume. Do not add a persistent storage mount to the app container.
+
+To keep uploads out of the database, create a **private** bucket in any S3-compatible provider (for example a DigitalOcean Space), create an access key for it, and set `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID` and `S3_SECRET_ACCESS_KEY` on the app (lock the secret). Redeploy. New uploads then go to the bucket; files already in PostgreSQL keep working. Files are served through Hub, so the bucket does not need to be public. Include the bucket in your backups.
 
 ## 6. Backups
 

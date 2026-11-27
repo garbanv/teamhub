@@ -1,8 +1,16 @@
+import { randomUUID } from "node:crypto";
+
 import type { PoolClient } from "pg";
 
 import { query, withTransaction } from "./db";
 import { AppError } from "./errors";
 import { emptyRichText, richTextToPlainText } from "./rich-text";
+import {
+  buildObjectKey,
+  deleteObject,
+  isObjectStorageEnabled,
+  putObject,
+} from "./storage";
 import type { DocPageDetail, DocPageListItem } from "./types";
 
 type PageRow = {
@@ -418,33 +426,57 @@ export async function storeWorkspaceFile(input: {
   mimeType: string;
   data: Buffer;
 }) {
-  const result = await query<{ id: string }>(
-    `
-      insert into workspace_files
-        (workspace_id, uploaded_by, name, mime_type, size_bytes, data)
-      values ($1, $2, $3, $4, $5, $6)
-      returning id
-    `,
-    [
-      input.workspaceId,
-      input.userId,
-      input.name,
-      input.mimeType,
-      input.data.length,
-      input.data,
-    ],
-  );
-  return result.rows[0]!.id;
+  const fileId = randomUUID();
+  const useObjectStorage = isObjectStorageEnabled();
+  const storageKey = useObjectStorage
+    ? buildObjectKey(input.workspaceId, fileId)
+    : null;
+
+  if (storageKey) {
+    await putObject({
+      key: storageKey,
+      body: input.data,
+      contentType: input.mimeType,
+    });
+  }
+
+  try {
+    await query(
+      `
+        insert into workspace_files
+          (id, workspace_id, uploaded_by, name, mime_type, size_bytes, data, storage_key)
+        values ($1, $2, $3, $4, $5, $6, $7, $8)
+      `,
+      [
+        fileId,
+        input.workspaceId,
+        input.userId,
+        input.name,
+        input.mimeType,
+        input.data.length,
+        storageKey ? null : input.data,
+        storageKey,
+      ],
+    );
+  } catch (error) {
+    // Don't leave an orphaned object behind if the row couldn't be saved.
+    if (storageKey) await deleteObject(storageKey).catch(() => undefined);
+    throw error;
+  }
+  return fileId;
 }
 
 export async function getWorkspaceFile(workspaceId: string, fileId: string) {
   const { rows } = await query<{
     name: string;
     mimeType: string;
-    data: Buffer;
+    sizeBytes: number;
+    data: Buffer | null;
+    storageKey: string | null;
   }>(
     `
-      select name, mime_type as "mimeType", data
+      select name, mime_type as "mimeType", size_bytes as "sizeBytes",
+             data, storage_key as "storageKey"
       from workspace_files
       where id = $1 and workspace_id = $2
       limit 1
